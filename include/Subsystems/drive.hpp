@@ -33,17 +33,23 @@ void timedDrive(int time, int speed);
 
 void driveOP();
 
-void xDriveOP();
-
 void initializeInertialSensor();
 
-void move(int distance, int heading, bool fluid = false);
+void move(int distance, int heading, int accelStep, bool fluid = false);
 
-void moveUltra(int distance, int heading, bool fluid = false);
+void move(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
 
-void moveBack(int distance, int heading, bool fluid = false);
+void moveFluid(int distance, int heading, int accelStep);
+
+void moveBack(int distance, int heading, int accelStep, bool fluid = false);
+
+void moveBack(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
+
+void moveBackFluid(int distance, int heading, int accelStep);
 
 void turn(int degrees);
+
+void turn(int degrees, int kP, double minSpeed);
 
 void correct(int degrees);
 
@@ -56,3 +62,11 @@ void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold);
 void sweepLeft(int degrees, int leftSideSpeed);
 
 void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold);
+
+void sweepRightBack(int degrees, int leftSideSpeed);
+
+void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold);
+
+void sweepLeftBack(int degrees, int rightSideSpeed);
+
+void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold);

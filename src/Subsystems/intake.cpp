@@ -10,24 +10,6 @@ pros::Motor indexerMotor(20, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCO
 pros::ADIDigitalIn indexerLimit('G');
 pros::ADIDigitalIn intakeLimit('H');
 
-bool indexIsPressed()
-{
-    if (indexerLimit.get_value() == 1)
-    {
-        return true;
-    }
-    return false;
-}
-
-bool intakeIsPressed()
-{
-    if (intakeLimit.get_value() == 1)
-    {
-        return true;
-    }
-    return false;
-}
-
 void frontRollers(int speed)
 {
     rightRollerMotor.move(speed);
@@ -42,6 +24,36 @@ void intake(int speed)
 void indexer(int speed)
 {
     indexerMotor.move(speed);
+}
+
+void intakeFullStop()
+{
+    intake(0);
+    indexer(0);
+    frontRollers(0);
+}
+
+void loadIntake(void *parameter)
+{
+    frontRollers(127);
+    while (intakeLimit.get_value() != 1)
+    {
+        frontRollers(127);
+        intake(127);
+    }
+    intake(0);
+}
+
+void scoreOneBall()
+{
+    while (indexerLimit.get_value() != 1)
+    {
+        indexer(127);
+        intake(127);
+    }
+    intake(0);
+    wait(200);
+    indexer(0);
 }
 
 void intakeOP()

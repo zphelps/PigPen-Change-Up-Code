@@ -1,4 +1,13 @@
-
+/**
+ * @file main.h
+ * @author Zach Phelps
+ * @brief 
+ * @version 0.1
+ * @date 2020-05-11
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 
 #ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
@@ -7,10 +16,18 @@
 
 #define PROS_USE_LITERALS
 
+#include "okapi/api.hpp"
 #include "api.h"
-#include "drive.hpp"
-#include "intake.hpp"
-#include "misc.hpp"
+
+using namespace okapi;
+
+#include "Subsystems/drive.hpp"
+#include "Subsystems/intake.hpp"
+
+#include "Utilities/misc.hpp"
+
+#include "MotionControl/odometry.hpp"
+#include "MotionControl/PIDController.hpp"
 
 extern pros::Controller master;
 
