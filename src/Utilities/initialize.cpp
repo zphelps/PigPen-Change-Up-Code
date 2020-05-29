@@ -20,5 +20,7 @@ void initialize()
 
     pros::Task calcPos(calculate_position); //Begin position tracking
 
+    //initializeInertialSensor();
+
     pros::lcd::register_btn1_cb(on_center_button);
 }

@@ -5,6 +5,8 @@ extern pros::Motor backLeft;
 extern pros::Motor frontLeft;
 extern pros::Motor backLeft;
 
+extern pros::Imu inertial;
+
 extern double MOVE_KP;
 extern double MOVE_KI;
 extern double MOVE_KD;
@@ -26,12 +28,16 @@ extern const double REAR_OFFSET;
 void left(int speed);
 void right(int speed);
 
+void stopDrive();
+
 void brake();
 void coast();
 
 void timedDrive(int time, int speed);
 
 void driveOP();
+
+void checkInertial(int expectedAngle);
 
 void initializeInertialSensor();
 

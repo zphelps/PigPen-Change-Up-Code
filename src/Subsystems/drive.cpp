@@ -1,13 +1,13 @@
 #include "main.h"
 
-//Motors
+//Motors - 8
 pros::Motor leftFront(9, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor leftBack(2, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor rightFront(8, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor rightFront(5, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor rightBack(1, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 
 //Inertial
-pros::Imu inertial(8);
+pros::Imu inertial(3);
 
 //PID Gains
 double MOVE_KP = 0.15;
@@ -26,8 +26,8 @@ int POINT_TURN_MIN_SPEED = 15;
 
 const double WHEEL_DIAMETER = 2.75;
 const int TICS_PER_REVOLUTION = 360;
-const double LEFT_OFFSET = 5.95; //7
-const double RIGHT_OFFSET = 6.1; //5.95
+const double LEFT_OFFSET = 5.95;  //
+const double RIGHT_OFFSET = 5.95; //6.1
 const double REAR_OFFSET = 5.75;
 
 int rightSideSpeed = 0;
@@ -41,7 +41,7 @@ PIDController movePIDFluid(MOVE_KP, MOVE_KI, MOVE_KD, MOVE_MIN_SPEED_FLUID);
 
 PIDController pointTurnPID(TURN_KP, TURN_KI, TURN_KD, POINT_TURN_MIN_SPEED);
 
-PIDController sweepTurnPID = PIDController(1.1, 0, 0, 30);
+PIDController sweepTurnPID = PIDController(1.25, 0, 0, 35);
 
 PIDController sweepTurnPIDFluid(1.75, 0, 0, 80);
 
@@ -56,6 +56,12 @@ void right(int speed)
 {
     rightFront.move(speed);
     rightBack.move(speed);
+}
+
+void stopDrive()
+{
+    left(0);
+    right(0);
 }
 
 void slewRight(int speed, int accelStep)
@@ -137,6 +143,16 @@ void timedDrive(int time, int speed)
     wait(time);
     right(speed);
     left(speed);
+}
+
+void checkInertial(int expectedAngle)
+{
+    if (abs(inertial.get_rotation() - expectedAngle) < abs(getTheta() - expectedAngle))
+    {
+        master.print(0, 0, "%s", "Reset Theta");
+        setTheta(inertial.get_rotation());
+    }
+    master.print(0, 0, "%s", "Didn't Reset");
 }
 
 void initializeInertialSensor()
@@ -674,18 +690,19 @@ void correct(int degrees, int minSpeed)
  */
 void turnInertial(int degrees)
 {
+
     int time = 0;
 
     while (time < 50)
     {
 
-        right(-pointTurnPID.getOutput(degrees, getTheta()));
-        left(pointTurnPID.getOutput(degrees, getTheta()));
+        right(-pointTurnPID.getOutput(degrees, inertial.get_rotation()));
+        left(pointTurnPID.getOutput(degrees, inertial.get_rotation()));
 
-        if (abs(pointTurnPID.getError()) < 50)
+        if (fabs(pointTurnPID.getError()) < 2.5)
         {
             time++;
-            wait(2);
+            wait(5);
         }
 
         wait(5);
