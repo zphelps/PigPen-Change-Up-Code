@@ -73,11 +73,17 @@ void calculate_position(void *parameter)
         double cosP = cos(p);
         double sinP = sin(p);
 
-        yglobal = yglobal + (chord * cosP);
-        xglobal = xglobal + (chord * sinP);
+        // yglobal = yglobal + (chord * cosP);
+        // xglobal = xglobal + (chord * sinP);
 
-        yglobal = yglobal + (chord2 * -sinP);
-        xglobal = xglobal + (chord2 * cosP);
+        // yglobal = yglobal + (chord2 * -sinP);
+        // xglobal = xglobal + (chord2 * cosP);
+
+        xglobal = xglobal + (chord * cosP);
+        yglobal = yglobal - (chord * sinP);
+
+        xglobal = xglobal + (chord2 * -sinP);
+        yglobal = yglobal - (chord2 * cosP);
 
         pros::delay(1);
 

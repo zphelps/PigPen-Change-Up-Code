@@ -62,6 +62,48 @@ int PIDController::getOutput(int target, int current)
     return power;
 }
 
+int PIDController::getOutput(int error)
+{
+
+    double prevError = 0;
+
+    int integral = integral + error;
+
+    if (error == 0)
+    {
+        integral = 0;
+    }
+
+    if (abs(error) > 40)
+    {
+        integral = 0;
+    }
+
+    int derivative = error - prevError;
+
+    prevError = error;
+
+    int power = (error * kP + derivative * kI + integral * kD);
+
+    if (power <= minSpeed && power <= 0 && fabs(error) < 0.5)
+    {
+        return power;
+    }
+    else if (power >= -minSpeed && power <= 0 && fabs(error) < 0.5)
+    {
+        return power;
+    }
+    else if (power <= minSpeed && power >= 0)
+    {
+        power = minSpeed;
+    }
+    else if (power >= -minSpeed && power <= 0)
+    {
+        power = -minSpeed;
+    }
+    return power;
+}
+
 double PIDController::getError()
 {
     return error;

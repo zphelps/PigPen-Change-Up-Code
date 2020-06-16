@@ -3,7 +3,7 @@
 //Motors - 8
 pros::Motor leftFront(9, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor leftBack(2, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor rightFront(5, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor rightFront(8, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES); //Orange -5
 pros::Motor rightBack(1, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 
 //Inertial
@@ -26,8 +26,8 @@ int POINT_TURN_MIN_SPEED = 15;
 
 const double WHEEL_DIAMETER = 2.75;
 const int TICS_PER_REVOLUTION = 360;
-const double LEFT_OFFSET = 5.95;  //
-const double RIGHT_OFFSET = 5.95; //6.1
+const double LEFT_OFFSET = 5.87;  //5.95
+const double RIGHT_OFFSET = 5.87; //5.95
 const double REAR_OFFSET = 5.75;
 
 int rightSideSpeed = 0;
@@ -177,15 +177,17 @@ void driveOP()
     rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
 }
 
+void xdriveOP()
+{
+    rightFront.move(master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X));
+    rightBack.move(master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X));
+    leftFront.move(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X));
+    leftBack.move(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X));
+}
+
 //******************************************************************************
 //**************************Move Functions**************************************
-/**
- * @brief Standard Move Function
- * 
- * @param distance 
- * @param heading 
- * @param fluid 
- */
+
 void move(int distance, int heading, int accelStep, bool fluid)
 {
     if (fluid)
@@ -254,14 +256,6 @@ void move(int distance, int heading, int accelStep, bool fluid)
     rightSideSpeed = 0;
 }
 
-/**
- * @brief Override Move Function
- * 
- * @param distance 
- * @param heading 
- * @param accelStep 
- * @param fluid 
- */
 void move(int distance, int heading, int accelStep, double kP, int minSpeed, double correction)
 {
 
@@ -325,13 +319,6 @@ void move(int distance, int heading, int accelStep, double kP, int minSpeed, dou
     rightSideSpeed = 0;
 }
 
-/**
- * @brief move function for combining movements
- * 
- * @param distance 
- * @param heading 
- * @param accelStep 
- */
 void moveFluid(int distance, int heading, int accelStep)
 {
     double correctionMultiplier = 0.4; //0.2
@@ -386,14 +373,423 @@ void moveFluid(int distance, int heading, int accelStep)
     }
 }
 
-/**
- * @brief Standard Move Backwards Function
- * 
- * @param distance 
- * @param heading 
- * @param accelStep 
- * @param fluid 
- */
+void moveToYCoord(int distance, int heading, int accelStep, bool fluid)
+{
+
+    if (fluid)
+    {
+        moveToYCoordFluid(distance, heading, accelStep);
+    }
+
+    double correctionMultiplier = 0.2;
+
+    double target = distance;
+
+    if (getY() < target)
+    {
+        while (getY() < target && !fluid)
+        {
+
+            double PIDSpeed = (movePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    else if (getY() > target)
+    {
+        while (getY() > target && !fluid)
+        {
+
+            double PIDSpeed = (movePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    if (!fluid)
+    {
+        right(0);
+        left(0);
+    }
+
+    leftSideSpeed = 0;
+    rightSideSpeed = 0;
+}
+
+void moveToYCoordFluid(int distance, int heading, int accelStep)
+{
+    double correctionMultiplier = 0.4; //0.2
+
+    double target = distance;
+
+    if (getY() < target)
+    {
+        while (getY() < target)
+        {
+
+            double PIDSpeed = (movePIDFluid.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    else if (getY() > target)
+    {
+        while (getY() > target)
+        {
+
+            double PIDSpeed = (movePIDFluid.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+}
+
+void moveToYCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction)
+{
+
+    PIDController tempMovePID(kP, 0, 0, minSpeed);
+
+    double correctionMultiplier = correction;
+
+    double target = distance;
+    if (getY() < target)
+    {
+        while (getY() < target)
+        {
+
+            double PIDSpeed = (tempMovePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    else if (getY() > target)
+    {
+        while (getY() > target)
+        {
+
+            double PIDSpeed = (tempMovePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+
+    leftSideSpeed = 0;
+    rightSideSpeed = 0;
+}
+
+void moveAboslute(double x, double y, int accelStep)
+{
+    _Point targetPoint = _Point(x, y);
+
+    double correctionMultiplier = 0.2;
+
+    double distanceToTarget = sqrt(pow(targetPoint.x - getX(), 2) + pow(targetPoint.y - getY(), 2));
+
+    double heading = atan2(targetPoint.y - getY(), targetPoint.x - getX()) * 180 / PI;
+
+    master.print(0, 0, "%f", distanceToTarget);
+
+    while (distanceToTarget > 2)
+    {
+        distanceToTarget = sqrt(pow(targetPoint.x - getX(), 2) + pow(targetPoint.y - getY(), 2));
+
+        // if (targetPoint.x == getX())
+        // {
+        //     heading = 90;
+        // }
+        // else
+        // {
+        //     heading = (atan2(targetPoint.x - getX(), targetPoint.y - getY()) * 180 / PI) * -1;
+        // }
+
+        heading = (atan2(targetPoint.x - getX(), targetPoint.y - getY()) * 180 / PI) * -1;
+
+        double PIDSpeed = 90; //movePID.getOutput(distanceToTarget);
+
+        if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+        {
+            if (getTheta() < heading)
+            {
+                slewRight(correctionMultiplier * PIDSpeed, accelStep);
+                slewLeft(PIDSpeed, accelStep);
+            }
+
+            if (getTheta() > heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(correctionMultiplier * PIDSpeed, accelStep);
+            }
+
+            if (getTheta() == heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(PIDSpeed, accelStep);
+            }
+        }
+        else
+        {
+            if (getTheta() < heading)
+            {
+                slewRight(PIDSpeed * 0.8, accelStep); //0.8
+                slewLeft(PIDSpeed, accelStep);
+            }
+
+            if (getTheta() > heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(PIDSpeed * 0.8, accelStep);
+            }
+
+            if (getTheta() == heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(PIDSpeed, accelStep);
+            }
+        }
+    }
+
+    left(0);
+    right(0);
+
+    leftSideSpeed = 0;
+    rightSideSpeed = 0;
+
+    //turn(heading);
+}
+
 void moveBack(int distance, int heading, int accelStep, bool fluid)
 {
 
@@ -463,15 +859,6 @@ void moveBack(int distance, int heading, int accelStep, bool fluid)
     rightSideSpeed = 0;
 }
 
-/**
- * @brief Override Back Function
- * 
- * @param distance 
- * @param heading 
- * @param accelStep 
- * @param kP 
- * @param minSpeed 
- */
 void moveBack(int distance, int heading, int accelStep, double kP, int minSpeed, double correction)
 {
 
@@ -532,13 +919,6 @@ void moveBack(int distance, int heading, int accelStep, double kP, int minSpeed,
     rightSideSpeed = 0;
 }
 
-/**
- * @brief Fluid Back Function
- * 
- * @param distance 
- * @param heading 
- * @param accelStep 
- */
 void moveBackFluid(int distance, int heading, int accelStep)
 {
     double correctionMultiplier = 0.6; //0.2
@@ -593,13 +973,346 @@ void moveBackFluid(int distance, int heading, int accelStep)
     }
 }
 
+void moveBackToYCoord(int distance, int heading, int accelStep, bool fluid)
+{
+
+    if (fluid)
+    {
+        moveFluid(distance, heading, accelStep);
+    }
+
+    double correctionMultiplier = 0.2;
+
+    double target = distance;
+
+    if (getY() < target)
+    {
+        while (getY() < target && !fluid)
+        {
+
+            double PIDSpeed = (-movePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    else if (getY() > target)
+    {
+        while (getY() > target && !fluid)
+        {
+
+            double PIDSpeed = (-movePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    if (!fluid)
+    {
+        right(0);
+        left(0);
+    }
+
+    leftSideSpeed = 0;
+    rightSideSpeed = 0;
+}
+
+void moveBackToYCoordFluid(int distance, int heading, int accelStep)
+{
+    double correctionMultiplier = 0.4; //0.2
+
+    double target = distance;
+
+    if (getY() < target)
+    {
+        while (getY() < target)
+        {
+
+            double PIDSpeed = (-movePIDFluid.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    else if (getY() > target)
+    {
+        while (getY() > target)
+        {
+
+            double PIDSpeed = (-movePIDFluid.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+}
+
+void moveBackToYCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction)
+{
+
+    PIDController tempMovePID(kP, 0, 0, minSpeed);
+
+    double correctionMultiplier = correction;
+
+    double target = distance;
+    if (getY() < target)
+    {
+        while (getY() < target)
+        {
+
+            double PIDSpeed = (-tempMovePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+    else if (getY() > target)
+    {
+        while (getY() > target)
+        {
+
+            double PIDSpeed = (tempMovePID.getOutput(target, getY()));
+
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+            else
+            {
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep); //0.8
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
+            }
+        }
+    }
+
+    leftSideSpeed = 0;
+    rightSideSpeed = 0;
+}
+
 //******************************************************************************
 //**************************Turn Functions**************************************
-/**
- * @brief Simple Turn
- * 
- * @param degrees 
- */
+
 void turn(int degrees)
 {
 
@@ -714,12 +1427,7 @@ void turnInertial(int degrees)
 
 //******************************************************************************
 //*************************Sweep Functions**************************************
-/**
- * @brief Standard Sweep Right
- * 
- * @param degrees 
- * @param rightSideSpeed 
- */
+
 void sweepRight(int degrees, int rightSideSpeed)
 {
 
@@ -744,13 +1452,30 @@ void sweepRight(int degrees, int rightSideSpeed)
     right(0);
 }
 
-/**
- * @brief Sweep Right for Fluid Movements
- * 
- * @param degrees 
- * @param rightSideSpeed 
- * @param errorThreshhold 
- */
+void sweepRight(int degrees, int rightSideSpeed, double kP, int minspeed)
+{
+    PIDController tempSweepRightPID(kP, 0, 0, minspeed);
+    int time = 0;
+
+    while (time < 25)
+    {
+
+        right(rightSideSpeed);
+        left(tempSweepRightPID.getOutput(degrees, getTheta()));
+
+        if (abs(tempSweepRightPID.getError()) < 2.5)
+        {
+            time++;
+            wait(2);
+        }
+
+        wait(5);
+    }
+
+    left(0);
+    right(0);
+}
+
 void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold)
 {
 
@@ -761,12 +1486,17 @@ void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold)
     }
 }
 
-/**
- * @brief Standard Sweep Left
- * 
- * @param degrees 
- * @param leftSideSpeed 
- */
+void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed)
+{
+    PIDController tempSweepTurnPIDFluid = PIDController(kP, 0, 0, minSpeed);
+
+    while (getTheta() < degrees - errorThreshhold)
+    {
+        left(tempSweepTurnPIDFluid.getOutput(degrees, getTheta()));
+        right(rightSideSpeed);
+    }
+}
+
 void sweepLeft(int degrees, int leftSideSpeed)
 {
     int time = 0;
@@ -789,19 +1519,23 @@ void sweepLeft(int degrees, int leftSideSpeed)
     right(0);
 }
 
-/**
- * @brief Sweep Left for Fluid Movements
- * 
- * @param degrees 
- * @param leftSideSpeed 
- * @param errorThreshhold 
- */
 void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold)
 {
 
     while (getTheta() > degrees + errorThreshhold)
     {
         right(-sweepTurnPIDFluid.getOutput(degrees, getTheta()));
+        left(leftSideSpeed);
+    }
+}
+
+void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold, double kP, int minSpeed)
+{
+    PIDController tempSweepTurnPIDFluid = PIDController(kP, 0, 0, minSpeed);
+
+    while (getTheta() > degrees + errorThreshhold)
+    {
+        right(-tempSweepTurnPIDFluid.getOutput(degrees, getTheta()));
         left(leftSideSpeed);
     }
 }
@@ -843,6 +1577,16 @@ void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold)
     }
 }
 
+void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold, double kP, int minSpeed)
+{
+    PIDController tempSweepTurnPIDFluid = PIDController(kP, 0, 0, minSpeed);
+    while (getTheta() < degrees - errorThreshhold)
+    {
+        right(-tempSweepTurnPIDFluid.getOutput(degrees, getTheta()));
+        left(leftSideSpeed);
+    }
+}
+
 void sweepLeftBack(int degrees, int rightSideSpeed)
 {
     int time = 0;
@@ -865,12 +1609,47 @@ void sweepLeftBack(int degrees, int rightSideSpeed)
     right(0);
 }
 
+void sweepLeftBack(int degrees, int rightSideSpeed, double kP, int minSpeed)
+{
+
+    PIDController tempSweepPID(kP, 0, 0, minSpeed);
+
+    int time = 0;
+
+    while (time < 50)
+    {
+        right(rightSideSpeed);
+
+        left(tempSweepPID.getOutput(degrees, getTheta()));
+
+        if (abs(tempSweepPID.getError()) < 2.5)
+        {
+            time++;
+            wait(2);
+        }
+
+        wait(5);
+    }
+    left(0);
+    right(0);
+}
+
 void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold)
 {
 
     while (getTheta() > degrees + errorThreshhold)
     {
         left(sweepTurnPIDFluid.getOutput(degrees, getTheta()));
+        right(rightSideSpeed);
+    }
+}
+
+void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed)
+{
+    PIDController tempSweepTurnPIDFluid = PIDController(kP, 0, 0, minSpeed);
+    while (getTheta() > degrees + errorThreshhold)
+    {
+        left(tempSweepTurnPIDFluid.getOutput(degrees, getTheta()));
         right(rightSideSpeed);
     }
 }

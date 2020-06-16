@@ -37,6 +37,8 @@ void timedDrive(int time, int speed);
 
 void driveOP();
 
+void xdriveOP();
+
 void checkInertial(int expectedAngle);
 
 void initializeInertialSensor();
@@ -47,17 +49,31 @@ void move(int distance, int heading, int accelStep, double kP, int minSpeed, dou
 
 void moveFluid(int distance, int heading, int accelStep);
 
+void moveToYCoord(int distance, int heading, int accelStep, bool fluid);
+
+void moveToYCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
+
+void moveToYCoordFluid(int distance, int heading, int accelStep);
+
+void moveAboslute(double x, double y, int accelStep);
+
 void moveBack(int distance, int heading, int accelStep, bool fluid = false);
 
 void moveBack(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
 
 void moveBackFluid(int distance, int heading, int accelStep);
 
+void moveBackToYCoord(int distance, int heading, int accelStep, bool fluid);
+
+void moveBackToYCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
+
+void moveBackToYCoordFluid(int distance, int heading, int accelStep);
+
 void turn(int degrees);
 
 void turn(int degrees, int kP, double minSpeed);
 
-void correct(int degrees);
+void correct(int degrees, int minSpeed);
 
 void turnInertial(int degrees);
 
@@ -65,14 +81,26 @@ void sweepRight(int degrees, int rightSideSpeed);
 
 void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold);
 
+void sweepRight(int degrees, int rightSideSpeed, double kP, int minspeed);
+
+void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed);
+
 void sweepLeft(int degrees, int leftSideSpeed);
 
 void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold);
+
+void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold, double kP, int minSpeed);
 
 void sweepRightBack(int degrees, int leftSideSpeed);
 
 void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold);
 
+void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold, double kP, int minSpeed);
+
+void sweepLeftBack(int degrees, int rightSideSpeed, double kP, int minSpeed);
+
 void sweepLeftBack(int degrees, int rightSideSpeed);
 
 void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold);
+
+void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed);

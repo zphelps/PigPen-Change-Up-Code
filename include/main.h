@@ -25,6 +25,7 @@ using namespace okapi;
 #include "Subsystems/intake.hpp"
 
 #include "Utilities/misc.hpp"
+#include "Utilities/Point.hpp"
 
 #include "MotionControl/odometry.hpp"
 #include "MotionControl/PIDController.hpp"
