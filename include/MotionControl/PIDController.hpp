@@ -1,4 +1,4 @@
-
+//PID Controller class header
 class PIDController
 {
 private:
@@ -10,8 +10,8 @@ private:
     int error;
 
 public:
-    PIDController(double kP, double kI, double kD, int inMinSpeed, double accelStep);
     PIDController(double kP, double kI, double kD, int inMinSpeed);
+    PIDController(double kP, int inMinSpeed);
     int getOutput(int target, int current);
     int getOutput(int error);
     double getError();
