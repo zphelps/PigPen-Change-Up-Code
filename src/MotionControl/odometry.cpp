@@ -1,6 +1,6 @@
 #include "main.h"
 
-//Tracking Encoders
+//Tracking Encoders Constructors
 pros::ADIEncoder R('E', 'F', true);
 pros::ADIEncoder L('A', 'B', true);
 pros::ADIEncoder S('C', 'D', true);
@@ -44,7 +44,7 @@ void calculate_position(void *parameter)
         thetaInRadians += deltaTheta;
         thetaInDegrees = thetaInRadians * 180 / PI;
         thetaInDegreesUncorrected = thetaInDegrees;
-        thetaInDegrees = thetaInDegrees - 360 * floor(thetaInDegrees / 360); //Wrap around
+        thetaInDegrees = thetaInDegrees - 360 * floor(thetaInDegrees / 360); //Angle Wrap for Display of theta
         if (thetaInDegrees < 0)
         {
             thetaInDegrees = 360 + thetaInDegrees;
@@ -73,12 +73,6 @@ void calculate_position(void *parameter)
         double cosP = cos(p);
         double sinP = sin(p);
 
-        // yglobal = yglobal + (chord * cosP);
-        // xglobal = xglobal + (chord * sinP);
-
-        // yglobal = yglobal + (chord2 * -sinP);
-        // xglobal = xglobal + (chord2 * cosP);
-
         xglobal = xglobal + (chord * cosP);
         yglobal = yglobal - (chord * sinP);
 
@@ -92,9 +86,9 @@ void calculate_position(void *parameter)
         pros::lcd::print(2, "X: %f", xglobal);
         pros::lcd::print(3, "Y: %f", yglobal);
 
-        pros::lcd::print(4, "R: %d", R.get_value());
-        pros::lcd::print(5, "L: %d", L.get_value());
-        pros::lcd::print(6, "S: %d", S.get_value());
+        // pros::lcd::print(4, "R: %d", R.get_value());
+        // pros::lcd::print(5, "L: %d", L.get_value());
+        // pros::lcd::print(6, "S: %d", S.get_value());
     }
 }
 
