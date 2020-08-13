@@ -2,8 +2,8 @@
 
 //Tracking Encoders Constructors
 pros::ADIEncoder R('E', 'F', true);
-pros::ADIEncoder L('A', 'B', true);
-pros::ADIEncoder S('C', 'D', true);
+pros::ADIEncoder L('A', 'B', false);
+pros::ADIEncoder S('C', 'D', false);
 
 double xglobal;
 double yglobal;

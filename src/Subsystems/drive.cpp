@@ -26,8 +26,8 @@ int POINT_TURN_MIN_SPEED = 15; //Re-caculated everytime we make large changes to
 
 const double WHEEL_DIAMETER = 2.75;
 const int TICS_PER_REVOLUTION = 360;
-const double LEFT_OFFSET = 5.87;  //5.95
-const double RIGHT_OFFSET = 5.87; //5.95
+const double LEFT_OFFSET = 5.9;  //5.87
+const double RIGHT_OFFSET = 5.9; //5.87
 const double REAR_OFFSET = 5.75;
 
 //Acceleration Step Variables
@@ -224,10 +224,10 @@ void initializeInertialSensor()
 //**************************Drive OPControl*************************************
 void driveOP()
 {
-    leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 1);
-    leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 1);
-    rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 1);
-    rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 1);
+    leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.9);
+    leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.9);
+    rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.9);
+    rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.9);
 }
 
 //Separate x drive model control allows for modular drive code

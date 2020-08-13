@@ -11,6 +11,7 @@ void loadOneBallAndReverse(void *parameter);
 //Not Sure
 void loadOneBall(void *parameter);
 void scoreOneBall();
+void scoreOneBallInCenterGoal();
 void scoreOneBallWithWait();
 void scoreBalls(int time);
 void topBallSwitch(int timeout);
@@ -26,3 +27,5 @@ void intakeTests();
 void oneBlueCycleOneRed();
 void twoBlueCycleTwoRed();
 void twoBlueCycleTwoRedAuton();
+
+void intakeManager(void *parameter);

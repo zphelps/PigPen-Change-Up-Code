@@ -31,6 +31,7 @@ using namespace okapi;
 #include "MotionControl/PIDController.hpp"
 
 extern pros::Controller master;
+extern pros::Controller partner;
 extern pros::ADIDigitalIn indexerLimit;
 extern int autonIndex;
 
