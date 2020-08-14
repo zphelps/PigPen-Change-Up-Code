@@ -41,49 +41,6 @@ void testMinSpeed(int speed)
 
 void twoGoalAutonRight()
 {
-    // //turn(90, TURN_KP, 50);
-    // //move(15, 0, 2, true);
-    // sweepRight(130, 0);
-    // frontRollers(127);
-    // //fullIntake(127);
-    // //pros::Task load1(loadIntake);
-    // //fullIntake(127);
-    // move(8, 130, 2);
-    // timedDrive(300, 30);
-    // intakeFullStop();
-    // scoreOneBall();
-    // frontRollers(127);
-    // wait(200);
-    // intakeFullStop();
-    // oneRedOneBlue();
-
-    // intakeFullReverse();
-    // wait(500);
-    // //moveBack(20, 130, 3);
-    // //intakeFullStop();
-    // // sweepLeftBack(90, 0, 3.5, 30);
-    // // sweepLeftBack(90, 0, 15);
-    // // moveBack(51, 90, 0);
-    // // sweepRight(180, 0, 3.0, 30);
-    // moveBack(68, 90, 1, MOVE_KP, 20, 0.25);
-    // turn(180);
-    // move(15, 180, 0, true);
-    // //timedDrive(300, 30);
-    // //scoreOneBall();
-    // cycleBlueRed();
-    // moveBack(10, 180, 2);
-    // /*
-    // turn(-90);
-    // move(30, -90, 2);
-    // turn(-145, 2.5, MOVE_MIN_SPEED);
-    // pros::Task load3(loadIntake);
-    // move(41, -145, 2);
-    // turn(-140);
-    // timedDrive(500, 30);
-    // wait(2000);
-    // intakeFullStop();
-    // //move(15, 130, 0);
-    // // correct(20, 20);*/
     setCoordinates(0, 24, 0);
     sweepRight(135, 0);
     frontRollers(127);
@@ -98,14 +55,6 @@ void twoGoalAutonRight()
     fullIntake(127);
     sweepLeftBack(90, 0, 15, 5, 100);
     moveBackToYCoord(56, 90, 0, 6, 30, 0.8);
-    //58
-
-    // turn(180);
-    // intakeFullStop();
-    // move(10, 180, 0, 0.3, 40, 0.2); //8
-    // timedDrive(300, 30);
-    // scoreOneBall();
-    // intakeFullReverse();
 
     turn(180);
     intakeFullStop();
@@ -118,17 +67,12 @@ void twoGoalAutonRight()
     scoreOneBall();
     moveBack(14, 180, 2, 0.15, 30, 0.2);
     intakeFullReverse();
-    // move(10, 180, 0, 0.3, 40, 0.2); //8
-    // timedDrive(300, 30);
-    // scoreOneBall();
-    // intakeFullReverse();
 }
 
 void twoGoalAutonLeft()
 {
     setCoordinates(0, 125, 0);
     sweepLeft(-135, 0);
-    // pros::Task task1(loadOneBallAndReverse);
     frontRollers(127);
     move(8, -135, 0);
     timedDrive(300, 30);
@@ -139,72 +83,20 @@ void twoGoalAutonLeft()
 
     moveBack(10, -135, 0, true);
     fullIntake(127);
-    //wait(100000);
     sweepRightBack(-90, 0, 20, 5, 100);
     moveBackToYCoord(90, -90, 0, 6, 30, 0.8);
 
     turn(-180);
     intakeFullStop();
-    // frontRollers(127);
     move(10, -180, 0, 0.3, 40, 0.2); //8
-    // move(8, -180, 0, 0.3, 40, 0.2);
-    // timedDrive(500, 40);
-    // scoreOneBall();
-    // wait(350);
-    // scoreOneBall();
-    // intakeFullReverse();
-    // move(8, -180, 0, 0.3, 40, 0.2);
     timedDrive(300, 30);
     scoreOneBall();
     intakeFullReverse();
 
     moveBack(14, -180, 0, 0.25, 35, 0.8);
-    // //turn(90, TURN_KP, 50);
-    // //move(15, 0, 2, true);
-    // sweepLeft(-130, 0);
-    // //fullIntake(127);
-    // //pros::Task load1(loadIntake);
-    // //fullIntake(127);
-    // frontRollers(127);
-    // move(8, -130, 2);
-    // timedDrive(300, 30);
-    // intakeFullStop();
-    // scoreOneBall();
-    // frontRollers(127);
-    // wait(200);
-    // intakeFullStop();
-    // oneRedOneBlue();
-
-    // intakeFullReverse();
-    // wait(500);
-    // //moveBack(20, 130, 3);
-    // //intakeFullStop();
-    // // sweepLeftBack(90, 0, 3.5, 30);
-    // // sweepLeftBack(90, 0, 15);
-    // // moveBack(51, 90, 0);
-    // // sweepRight(180, 0, 3.0, 30);
-    // moveBack(60, -90, 1, MOVE_KP, 20, 0.25);
-    // turn(-180);
-    // move(15, -180, 0, true);
-    // //timedDrive(300, 30);
-    // //scoreOneBall();
-    // cycleBlueRed();
-    // moveBack(10, -180, 2);
-    // /*
-    // turn(-90);
-    // move(30, -90, 2);
-    // turn(-145, 2.5, MOVE_MIN_SPEED);
-    // pros::Task load3(loadIntake);
-    // move(41, -145, 2);
-    // turn(-140);
-    // timedDrive(500, 30);
-    // wait(2000);
-    // intakeFullStop();
-    // //move(15, 130, 0);
-    // // correct(20, 20);*/
 }
 
-void home_row_right()
+void home_row_right_cycle()
 {
     setCoordinates(0, 24, 0);
     sweepRight(135, 0);
@@ -311,7 +203,7 @@ void home_row_right_no_cycle()
     moveBack(24, 225, 1);
 }
 
-void home_row_left()
+void home_row_left_cycle()
 {
     setCoordinates(0, 125, 0);
     sweepLeft(-135, 0);
@@ -367,136 +259,6 @@ void home_row_left()
 }
 
 void programming_skills()
-{
-    setCoordinates(0, 24, 0);
-    pros::Task task1(loadOneBall);
-    move(5, 0, 0, 0.2, 40, 0.8);
-    sweepRight(135, -5);
-    move(10, 135, 0, true);
-    timedDrive(200, 35);
-    intakeFullStop();
-    scoreOneBall();
-    wait(100);
-    fullIntake(127);
-    indexer(-127);
-
-    moveBack(12, 135, 0, true);
-    intakeFullStop();
-    sweepLeftBack(90, 0, 2.75, 40);
-    pros::Task load1(loadOneBall);
-    move(24, 90, 2);
-    timedDrive(500, 35);
-    moveBack(12, 90, 1);
-    //sweepLeft(-90, -5);
-    turn(-45, 1, 20);
-
-    frontRollers(127);
-    move(5, -45, 1, true);
-    sweepLeft(-90, 0, 10);
-    moveToYCoord(56, -90, 0, 4, 25, 0.4);
-
-    turn(-180);
-    move(26, -180, 0, true);
-    intakeFullStop();
-    timedDrive(300, 40);
-    scoreBalls(500);
-
-    moveBack(6, -180, 0, MOVE_KP + 0.05, 25, 0.5);
-    fullIntake(127);
-    indexer(-127);
-    turn(-90);
-    pros::Task load3(loadOneBall);
-    move(40, -90, 1);
-    sweepLeft(-135, 0, 10);
-    move(8, -135, 0);
-    intakeFullStop();
-    timedDrive(200, 35);
-    scoreOneBall();
-    wait(100);
-    fullIntake(127);
-    indexer(-127);
-
-    moveBack(12, -135, 0, true);
-    intakeFullStop();
-    sweepRightBack(-90, 0, 2.75, 40);
-    pros::Task loadBall(loadOneBall);
-    move(24, -90, 2);
-    timedDrive(500, 35);
-    moveBack(12, -90, 1);
-
-    wait(1000000);
-
-    sweepLeftBack(90, 1);
-    timedDrive(500, -50);
-    wait(200);
-    setTheta(90);
-    pros::Task load4(loadOneBall);
-
-    move(2, 90, 1);
-    sweepLeft(0, 1, 10);
-    move(29, 0, 0, 0.15, 30, 0.6);
-    turn(-90);
-    intakeFullStop();
-    timedDrive(350, 30);
-    scoreOneBall();
-    moveBack(8, -90, 1);
-    turn(0);
-    pros::Task load5(loadOneBall);
-
-    move(38, 15, 2, MOVE_KP, 20, 0.3); //0.3
-    turn(-45, 1.5, 25);
-    move(26, -45, 0);
-    timedDrive(300, 30);
-    topBallSwitch(1000);
-    intakeFullReverse();
-
-    moveBack(32, 0, 1, MOVE_KP, 20, 0.3);
-    wait(300);
-    turn(90);
-    moveBack(14, 90, 1);
-    timedDrive(750, -35);
-    setTheta(90);
-    wait(300);
-    pros::Task load6(loadOneBall);
-    move(58, 90, 1);
-    turn(0);
-    move(24, 0, 1, true);
-    intakeFullStop();
-    timedDrive(450, 40);
-    topBallSwitch(1500);
-    intakeFullReverse();
-
-    moveBack(28, 0, 0, 1.35, 40, 0.2);
-    wait(300);
-    turn(90);
-    move(24, 90, 0);
-    pros::Task load7(loadOneBall);
-    turn(45, 1.5, 25);
-    move(42, 40, 2, true);
-    intakeFullStop();
-    timedDrive(750, 40);
-    topBallSwitch(2500);
-    intakeFullReverse();
-
-    sweepLeftBack(-90, 1);
-    moveBack(3, -90, 0);
-    timedDrive(600, -40);
-    setTheta(-90);
-    wait(200);
-
-    move(3, -90, 1);
-    sweepLeft(-180, 1, 10);
-    move(25, -180, 0, 0.1, 25, 0.6);
-    turn(-270);
-    intakeFullStop();
-    timedDrive(350, 30);
-    scoreOneBall();
-    moveBack(8, -270, 1);
-
-    turn(-90, 1.15, POINT_TURN_MIN_SPEED);
-}
-
-void programming_skills_new()
 {
     setCoordinates(1, 24, 0);
     pros::Task intake_manager(intakeManager);
@@ -665,45 +427,29 @@ void programming_skills_new()
 
 void autonomous()
 {
-    //programming_skills_new();
-    //home_row_right_no_cycle();
-    //home_row_left();
-    // timedDrive(300, 35);
-    // scoreOneBall();
-    // wait(200);
-    // scoreOneBall();
-    //home_row_left();
-    twoGoalAutonLeft();
-    // frontRollers(127);
-    // intake(90);
-    // pros::Task test(intakeManager);
-    // wait(1000000);
-    // turn(90);
-    // wait(200);
-    // turn(180);
-    // wait(200);
-    // turn(270);
-    // wait(200);
-    // turn(360);
-    //turn(90);
-    //twoGoalAutonLeft();
-    // switch (autonIndex)
-    // {
-    // case 0:
-    //     home_row_right();
-    //     break;
-    // case 1:
-    //     home_row_left();
-    //     break;
-    // case 2:
-    //     twoGoalAutonRight();
-    //     break;
-    // case 3:
-    //     //Red Back
-    //     twoGoalAutonLeft();
-    //     break;
-    // case 4:
-    //     programming_skills_new();
-    //     break;
-    // }
+    switch (autonIndex)
+    {
+    case 0:
+        home_row_right_no_cycle();
+        break;
+    case 1:
+        home_row_right_cycle();
+        break;
+    case 2:
+        //home_row_left_no_cycle();
+        break;
+    case 3:
+        home_row_left_cycle();
+        break;
+    case 4:
+        //Red Back
+        twoGoalAutonRight();
+        break;
+    case 5:
+        twoGoalAutonLeft();
+        break;
+    case 6:
+        programming_skills();
+        break;
+    }
 }
