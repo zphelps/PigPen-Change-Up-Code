@@ -107,8 +107,9 @@ void scoreOneBall()
         intake(127);
     }
     intake(-20);
-    wait(300); //200
+    wait(200); //200
     indexer(0);
+    intake(0);
 }
 
 void scoreOneBallInCenterGoal()

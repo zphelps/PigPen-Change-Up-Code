@@ -224,10 +224,10 @@ void initializeInertialSensor()
 //**************************Drive OPControl*************************************
 void driveOP()
 {
-    leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.9);
-    leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.9);
-    rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.9);
-    rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.9);
+    leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 1);
+    leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 1);
+    rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 1);
+    rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 1);
 }
 
 //Separate x drive model control allows for modular drive code
@@ -2411,7 +2411,7 @@ void sweepLeft(int degrees, int leftSideSpeed)
     {
         left(leftSideSpeed);
 
-        right(-sweepTurnPID.getOutput(degrees, getTheta()));
+        right(sweepTurnPID.getOutput(abs(degrees), abs(getTheta())));
 
         if (abs(sweepTurnPID.getError()) < 2.5)
         {
