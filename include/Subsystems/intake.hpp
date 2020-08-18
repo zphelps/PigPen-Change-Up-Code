@@ -11,6 +11,7 @@ void loadOneBallAndReverse(void *parameter);
 //Not Sure
 void loadOneBall(void *parameter);
 void scoreOneBall();
+void scoreOneBall(int timeout);
 void scoreOneBallInCenterGoal();
 void scoreOneBallWithWait();
 void scoreBalls(int time);
