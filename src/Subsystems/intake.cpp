@@ -57,6 +57,9 @@ void intakeManager(void *parameter)
         {
             indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
             intake(0);
+            indexer(-20);
+            wait(100);
+            indexer(0);
         }
         else
         {
@@ -101,6 +104,7 @@ void loadOneBall(void *parameter)
 
 void scoreOneBall()
 {
+    indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     while (indexerLimit.get_value() != 1)
     {
         indexer(127);
@@ -114,6 +118,7 @@ void scoreOneBall()
 
 void scoreOneBall(int timeout)
 {
+    indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     int time = 0;
     while (indexerLimit.get_value() != 1 && time < timeout)
     {

@@ -266,13 +266,10 @@ void programming_skills()
     setCoordinates(1, 24, 0);
     pros::Task intake_manager(intakeManager);
     frontRollers(127);
-    intake(90);
-    // move(3, 0, 0, 0.2, 40, 0.8);
-    // sweepRight(135, -5, 1.5, 25);
-    // frontRollers(127);
-    // move(8, 135, 0, 0.2, 35, 0.2);
+    intake(127);
     move(8, 0, 0, 0.2, 40, 0.8);
     sweepRight(90, 0, 10, 1.75, 25); //1.35, 35
+    intake(90);
     move(15, 90, 0, true);
     timedDrive(350, 35);       //350
     moveBack(16, 90, 1, true); //15
@@ -280,8 +277,7 @@ void programming_skills()
     sweepRightBack(135, 5, 1.45, 35);
     move(20, 135, 0, 0.4, 35, 0.2); //0.3
     timedDrive(300, 35);
-    wait(200);
-    scoreOneBall(1000);
+    scoreOneBall(1500);
 
     moveBackToYCoord(10, 135, 1, 8.5, MOVE_MIN_SPEED, 0.2); //10
 
@@ -310,17 +306,12 @@ void programming_skills()
     frontRollers(0);
     wait(250);
     timedDrive(750, 60);
-    // if (getTheta() > 86 && getTheta() < 94)
-    // {
-    //     setTheta(90);
-    // }
     setTheta(90);
     setCoordinates(getX(), -3, getTheta());
     wait(100);
     frontRollers(127);
     moveBackToYCoord(5, 90, 0);
-    turn(0, 1.4, 25); //5
-    //move(1, 5, 0, true);
+    turn(0, 1.4, 25);                //5
     sweepRight(45, 30, 5, 2.75, 50); //45, 35
     frontRollers(0);
     timedDrive(200, 35); //500
@@ -396,7 +387,7 @@ void programming_skills()
     right(100);
     intake(127);
     frontRollers(127);
-    wait(200);
+    wait(750);
     scoreOneBallInCenterGoal();
     indexer(-127);
     intake(127);
@@ -411,65 +402,27 @@ void programming_skills()
     intake(127);
     frontRollers(127);
     turn(135, 1.5, 25);
-    indexer(0);
-    intake(127);
     move(25, 135, 0, true);
+    indexer(0);
     sweepRight(180, -5, 1.75, 35);
-    move(24, 180, 0, 0.2, 30, 0.2); //24
+    move(24, 180, 1, 0.2, 30, 0.2); //24
     frontRollers(127);
     timedDrive(400, 35);
     scoreOneBall();
-    frontRollers(-127);
+    frontRollers(0);
 
     moveBack(5, 180, 2, 0.15, 30, 0.2);
+    frontRollers(127);
     intake(127);
     indexer(-127);
     turn(270);
     indexer(0);
-    frontRollers(127);
-    move(28, 270, 1, true);
+    move(32, 270, 1, true); //28
     sweepLeft(225, 30, 15, 1.75, 80);
     move(10, 225, 0, 0.2, 40, 0.5);
     timedDrive(500, 40);
     scoreOneBall();
     moveBack(24, 225, 0);
-
-    // moveBack(28, 90, 1);
-
-    // indexer(-127);
-    // intake(127);
-    // turn(180);
-    // indexer(0);
-    // intake(127);
-    // frontRollers(127);
-    // move(56, 180, 1, 0.1, 35, 0.2);
-    // timedDrive(300, 35);
-    // wait(100);
-    // moveBack(16, 180, 0, true); //16
-    // frontRollers(0);
-    // sweepRightBack(225, 10, 1.45, 35); //1.75, 40
-    // move(24, 225, 0);                  //24
-    // timedDrive(250, 35);
-    // scoreOneBall();
-    // intakeFullReverse();
-
-    // moveBack(25, 225, 0);
-    // intakeFullStop();
-
-    // sweepLeftBack(180, 0, 10, 5, 90);
-    // moveBackToXCoord(46, 180, 0, 6, 30, 0.5);
-
-    // intake(127);
-    // frontRollers(127);
-    // turn(90);
-    // move(28, 90, 0, 0.1, 30, 0.2); //26
-    // turn(180);
-    // move(26, 180, 0, 0.3, 30, 0.2);
-    // frontRollers(0);
-    // timedDrive(250, 40);
-    // scoreOneBall();
-    // intake(127);
-    // wait(200);
 }
 
 void autonomous()
@@ -481,7 +434,8 @@ void autonomous()
     // turn(270);
     // wait(250);
     // turn(360);
-    programming_skills();
+    //programming_skills();
+    scoreOneBall(2000);
 
     // switch (autonIndex)
     // {
