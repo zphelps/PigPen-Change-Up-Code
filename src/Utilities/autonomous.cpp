@@ -1,5 +1,7 @@
 #include "main.h"
 
+//Ready for Michigan tournament!
+
 std::shared_ptr<ChassisController> okapiChassis = ChassisControllerBuilder()
                                                       .withMotors({9, 2}, {5, 1})
                                                       .withGains(
