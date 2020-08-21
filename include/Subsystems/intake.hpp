@@ -8,6 +8,8 @@ void indexer(int speed);
 void intakeFullReverse();
 void loadOneBallAndReverse(void *parameter);
 
+void ejectBalls(void *parameter);
+
 //Not Sure
 void loadOneBall(void *parameter);
 void scoreOneBall();

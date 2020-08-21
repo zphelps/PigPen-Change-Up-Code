@@ -275,9 +275,10 @@ void programming_skills()
     moveBack(16, 90, 1, true); //15
     frontRollers(0);
     sweepRightBack(135, 5, 1.45, 35);
+    intake_manager.suspend();
     move(20, 135, 0, 0.4, 35, 0.2); //0.3
     timedDrive(300, 35);
-    scoreOneBall(1500);
+    scoreOneBall(2000);
 
     moveBackToYCoord(10, 135, 1, 8.5, MOVE_MIN_SPEED, 0.2); //10
 
@@ -291,9 +292,9 @@ void programming_skills()
     move(6, 90, 0, 0.2, 35, 0.2);
     intake_manager.suspend();
     timedDrive(100, 30);
-    scoreOneBall(1000);
+    scoreOneBall(2000);
     wait(250);
-    scoreOneBall(500);
+    scoreOneBall(2000);
     moveBack(10, 90, 0);
 
     intake_manager.resume();
@@ -313,9 +314,10 @@ void programming_skills()
     moveBackToYCoord(5, 90, 0);
     turn(0, 1.4, 25);                //5
     sweepRight(45, 30, 5, 2.75, 50); //45, 35
+    intake_manager.suspend();
     frontRollers(0);
     timedDrive(200, 35); //500
-    scoreOneBall(500);
+    scoreOneBall(2000);
     sweepLeftBack(0, 0, 5, 5, 100);
     moveBackToXCoord(89, 0, 0, 10, 25, 0.4); //6, 30, 0.3
 
@@ -331,9 +333,9 @@ void programming_skills()
     intake_manager.suspend();
     timedDrive(100, 30); //300
     wait(200);
-    scoreOneBall(500);
+    scoreOneBall(2000);
     wait(250);
-    scoreOneBall(500);
+    scoreOneBall(2000);
     setCoordinates(132, getY(), getTheta());
 
     frontRollers(-127);
@@ -345,9 +347,10 @@ void programming_skills()
     move(28, -90, 1, true); //24
     sweepRight(-45, 0, 15, 2, 75);
     move(3, -25, 0);
+    intake_manager.suspend();
     frontRollers(0);
     timedDrive(350, 35);
-    scoreOneBall();
+    scoreOneBall(2000);
     wait(250);
     frontRollers(-127);
     moveBack(26, -45, 2); //26
@@ -378,7 +381,7 @@ void programming_skills()
     scoreOneBall();
     wait(300);
     scoreOneBall();
-    moveBack(22, -88, 2, 0.1, 30, 0.3);
+    moveBack(22, -88, 2, 0.1, 30, 0.8);
     frontRollers(127);
 
     turn(90, 1.35, 15);
@@ -387,7 +390,7 @@ void programming_skills()
     right(100);
     intake(127);
     frontRollers(127);
-    wait(750);
+    wait(1000);
     scoreOneBallInCenterGoal();
     indexer(-127);
     intake(127);
@@ -398,12 +401,9 @@ void programming_skills()
 
     moveBack(16, 90, 1);
 
-    indexer(-127);
-    intake(127);
-    frontRollers(127);
+    pros::Task eject(ejectBalls);
     turn(135, 1.5, 25);
     move(25, 135, 0, true);
-    indexer(0);
     sweepRight(180, -5, 1.75, 35);
     move(24, 180, 1, 0.2, 30, 0.2); //24
     frontRollers(127);
@@ -434,8 +434,8 @@ void autonomous()
     // turn(270);
     // wait(250);
     // turn(360);
-    //programming_skills();
-    scoreOneBall(2000);
+    //scoreOneBall();
+    programming_skills();
 
     // switch (autonIndex)
     // {
