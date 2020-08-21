@@ -128,7 +128,7 @@ void scoreOneBall(int timeout)
         time++;
     }
     intake(-20);
-    wait(250); //200
+    wait(200); //200
     indexer(0);
     intake(0);
 }
@@ -401,6 +401,36 @@ void ejectBalls(void *parameter)
     }
     time = 0;
     while (time < 1000)
+    {
+        wait(1);
+        time++;
+        indexer(-127);
+        intake(127);
+        frontRollers(127);
+    }
+    intakeFullStop();
+    frontRollers(127);
+}
+
+void ejectOneBall(void *parameter)
+{
+    int time = 0;
+    while (intakeLimit.get_value() == 0)
+    {
+        indexer(75);
+        intake(75);
+        frontRollers(127);
+    }
+    while (time < 350)
+    {
+        frontRollers(0);
+        indexer(-127);
+        intake(-127);
+        wait(1);
+        time++;
+    }
+    time = 0;
+    while (time < 250)
     {
         wait(1);
         time++;

@@ -9,6 +9,7 @@ void intakeFullReverse();
 void loadOneBallAndReverse(void *parameter);
 
 void ejectBalls(void *parameter);
+void ejectOneBall(void *parameter);
 
 //Not Sure
 void loadOneBall(void *parameter);
