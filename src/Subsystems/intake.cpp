@@ -35,6 +35,11 @@ void indexer(int speed)
     indexerMotor.move(speed);
 }
 
+void indexerVelocity(int speed)
+{
+    indexerMotor.move_velocity(speed);
+}
+
 void intakeFullStop()
 {
     intake(0);
@@ -541,7 +546,7 @@ void intakeOP()
         {
             frontRollers(127);
             intake(75);
-            //indexer(50);
+            indexer(50);
         }
     }
     else if (master.get_digital(DIGITAL_R2) || partner.get_digital(DIGITAL_R2))
@@ -567,19 +572,19 @@ void intakeOP()
 
         if (indexerLimit.get_value() == 1)
         {
-            intake(-20);
-            wait(250); //150
-            indexer(-20);
-            wait(100);
+            intake(0);
+            wait(200); //250
+            indexer(-50);
+            wait(150); //150
         }
         else if (intakeLimit.get_value() == 0)
         {
-            indexer(127);
+            indexerVelocity(600);
             intake(127);
         }
         else
         {
-            indexer(127);
+            indexerVelocity(600);
             intake(0);
         }
     }
