@@ -7,7 +7,7 @@ const char *autoNames[autoCount] = {
     "Home Row - Right Side - No Cycle",
     "Home Row - Right Side - Cycle",
     "Home Row - Left Side - No Cycle",
-    "Home Row - Left Side - Cycle",
+    "Two Goal Right",
     "Programming Skills"};
 
 // void on_right_button()

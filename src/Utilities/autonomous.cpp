@@ -47,32 +47,28 @@ void twoGoalAutonRight()
     sweepRight(135, 0, 1.5, 25);
     frontRollers(127);
     move(8, 135, 0, 0.2, 35, 0.2);
-    timedDrive(300, 35);
-    // scoreOneBall();
-    // intake(90);
-    // frontRollers(-127);
+    timedDrive(300, 30); //300
+    frontRollers(0);
     scoreOneBall();
-    wait(200);
-    //frontRollers(0);
-    scoreOneBall();
-    intake(-127);
+    intake(90);
     frontRollers(-127);
 
     moveBack(8, 135, 0, true); //10
-    intake(127);
+    fullIntake(127);
     sweepLeftBack(90, 0, 15, 5, 100);
-    moveBackToYCoord(56, 90, 0, 6, 30, 0.8);
+    moveBackToYCoord(56, 90, 0, 6, 30, 0.6); //0.8
+    //58
 
+    indexer(-127);
     turn(180);
+    indexer(0);
     intakeFullStop();
-    frontRollers(127);
     move(10, 180, 0, 0.3, 40, 0.2); //8
-    timedDrive(500, 40);
+    timedDrive(100, 30);
     scoreOneBall();
-    wait(250);
-    scoreOneBall();
-    moveBack(14, 180, 2, 0.15, 30, 0.2);
     intakeFullReverse();
+
+    moveBack(14, 180, 2, 0.15, 30, 0.2);
 }
 
 void twoGoalAutonLeft()
@@ -108,7 +104,7 @@ void home_row_right_cycle()
     sweepRight(135, 0, 1.5, 25);
     frontRollers(127);
     move(8, 135, 0, 0.2, 35, 0.2);
-    timedDrive(300, 30);
+    timedDrive(300, 35);
     frontRollers(0);
     scoreOneBall();
     intake(90);
@@ -120,26 +116,30 @@ void home_row_right_cycle()
     moveBackToYCoord(56, 90, 0, 6, 30, 0.6);
     //58
 
+    indexer(-127);
     turn(180);
+    indexer(0);
     intakeFullStop();
     frontRollers(127);
     move(10, 180, 0, 0.3, 40, 0.2); //8
     timedDrive(500, 35);
-    scoreOneBall();
+    scoreOneBall(2000);
+    indexer(-127);
     wait(250);
-    scoreOneBall();
+    indexer(0);
+    scoreOneBall(3000);
     intakeFullReverse();
 
     moveBack(14, 180, 2, 0.15, 30, 0.2);
     turn(270);
-    move(26, 270, 1, true);
+    move(28, 270, 1, true); //26
     sweepLeft(225, 30, 20, 1.6, 80);
     frontRollers(127);
     move(10, 225, 0, 0.2, 40, 0.5);
     timedDrive(500, 40);
     scoreOneBall();
     wait(200);
-    //frontRollers(0);
+    frontRollers(0);
     scoreOneBall();
     intakeFullReverse();
     moveBack(24, 225, 1);
@@ -163,7 +163,9 @@ void home_row_right_no_cycle()
     moveBackToYCoord(56, 90, 0, 6, 30, 0.6); //0.8
     //58
 
+    indexer(-127);
     turn(180);
+    indexer(0);
     intakeFullStop();
     move(10, 180, 0, 0.3, 40, 0.2); //8
     timedDrive(100, 30);
@@ -179,6 +181,7 @@ void home_row_right_no_cycle()
     timedDrive(500, 40);
     scoreOneBall();
     wait(200);
+    frontRollers(0);
     scoreOneBall();
     intakeFullReverse();
     moveBack(24, 225, 1);
@@ -243,10 +246,11 @@ void programming_skills()
 
     moveBackToYCoord(10, 135, 1, 8.5, MOVE_MIN_SPEED, 0.2); //10
 
-    intake_manager.resume();
+    //intake_manager.resume();
+    frontRollers(127);
     turn(0, 1.25, 20); //1.15 25
     intake(90);
-    frontRollers(127);
+    intake_manager.resume();
     moveToXCoord(60, 0, 0, 5, 30, 0.2); //4, 30
     turn(90);
     frontRollers(0);
@@ -286,7 +290,6 @@ void programming_skills()
     intake_manager.resume();
     intake(127);
     frontRollers(127);
-    indexer(-127);
     turn(-90);
     intake(0);
     moveToYCoord(54, -90, 1, 4.5, 30, 0.2); //56
@@ -331,9 +334,9 @@ void programming_skills()
     setTheta(-90);
 
     frontRollers(127);
-    moveBack(35, -90, 1); //36
+    moveBack(36, -90, 1); //35
     turn(-180);
-    move(34, -180, 0); //32
+    move(35, -180, 0); //34
     turn(-90);
 
     move(28, -90, 0);
@@ -343,7 +346,7 @@ void programming_skills()
     scoreOneBall();
     wait(250);
     scoreOneBall();
-    moveBack(22, -88, 2, 0.1, 30, 0.8);
+    moveBack(22, -88, 2, 0.1, 30, 0.6); //0.8
     frontRollers(127);
 
     turn(90, 1.35, 15);
@@ -367,6 +370,7 @@ void programming_skills()
     turn(135, 1.5, 25);
     move(25, 135, 0, true);
     sweepRight(180, -5, 1.75, 35);
+    eject.suspend();
     move(24, 180, 1, 0.2, 30, 0.2); //24
     frontRollers(127);
     timedDrive(400, 35);
@@ -398,7 +402,7 @@ void autonomous()
     // turn(360);
     //scoreOneBall();
     //programming_skills();
-    //home_row_left_no_cycle();
+    //home_row_right_no_cycle();
     switch (autonIndex)
     {
     case 0:
@@ -412,6 +416,7 @@ void autonomous()
         break;
     case 3:
         //home_row_left_cycle();
+        twoGoalAutonRight();
         break;
     case 4:
         programming_skills();

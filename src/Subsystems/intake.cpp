@@ -112,7 +112,7 @@ void scoreOneBall()
     indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     while (indexerLimit.get_value() != 1)
     {
-        indexer(127);
+        indexerVelocity(600);
         intake(127);
     }
     intake(-20);
@@ -127,7 +127,7 @@ void scoreOneBall(int timeout)
     int time = 0;
     while (indexerLimit.get_value() != 1 && time < timeout)
     {
-        indexer(127);
+        indexerVelocity(600);
         intake(127);
         wait(1);
         time++;
@@ -539,7 +539,6 @@ void intakeOP()
         {
             indexer(0);
             frontRollers(127);
-            //intake(50);
             indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
         }
         else
@@ -555,14 +554,6 @@ void intakeOP()
     }
     else if (master.get_digital(DIGITAL_L2))
     {
-        // if (intakeLimit.get_value() == 1)
-        // {
-        //     indexer(-127);
-        //     intake(-127);
-        //     wait(300);
-        // }
-        // indexer(-127);
-        // intake(127);
         intakeReverseFor(750);
     }
     else if (master.get_digital(DIGITAL_L1) || partner.get_digital(DIGITAL_L1))
@@ -590,24 +581,8 @@ void intakeOP()
     }
     else if (master.get_digital(DIGITAL_LEFT) || partner.get_digital(DIGITAL_LEFT))
     {
-        //intakeReverseFor(750);
         indexer(-127);
         intake(127);
-    }
-    else if (partner.get_digital(DIGITAL_R1))
-    {
-        //intakeReverseFor(750);
-        frontRollers(127);
-    }
-    else if (master.get_digital(DIGITAL_UP))
-    {
-        left(100);
-        right(100);
-        intake(127);
-        frontRollers(127);
-        wait(500);
-        scoreOneBallInCenterGoal();
-        indexer(-127);
     }
     else if (master.get_digital(DIGITAL_DOWN) || partner.get_digital(DIGITAL_DOWN))
     {
