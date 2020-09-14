@@ -9,6 +9,7 @@ pros::Motor indexerMotor(20, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCO
 //Sensors
 pros::ADIDigitalIn indexerLimit('G');
 pros::ADIDigitalIn intakeLimit('H');
+pros::ADIDigitalIn test({1, 'H'});
 pros::Vision vision_sensor(16);
 
 int stopLoading = 0;
@@ -544,7 +545,7 @@ void intakeOP()
         else
         {
             frontRollers(127);
-            intake(75);
+            intake(127);
             indexer(50);
         }
     }
