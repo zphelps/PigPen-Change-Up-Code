@@ -1,13 +1,16 @@
 
 extern pros::ADIDigitalIn intakeLimit;
+extern pros::ADIDigitalIn indexerLimit;
+extern pros::ADILineSensor frontRollerLine;
+extern pros::ADILineSensor topRollerLine;
 
 //Currently Used
 void frontRollers(int speed);
 void intake(int speed);
 void indexer(int speed);
 void intakeFullReverse();
-void loadOneBallAndReverse(void *parameter);
 
+void initVision();
 void ejectBalls(void *parameter);
 void ejectOneBall(void *parameter);
 
@@ -18,18 +21,15 @@ void scoreOneBall(int timeout);
 void scoreOneBallInCenterGoal();
 void scoreOneBallWithWait();
 void scoreBalls(int time);
-void topBallSwitch(int timeout);
 void intakeFullStop();
 void intakeOP();
-void countThreeBlue();
-void oneRedOneBlue();
 void fullIntake(int speed);
-void cycleBlueRed();
 void scoreOneBallWithFrontRollers();
-void intakeTests();
 
 void oneBlueCycleOneRed();
 void twoBlueCycleTwoRed();
 void twoBlueCycleTwoRedAuton();
 
 void intakeManager(void *parameter);
+
+void setIntakeMode(int mode);

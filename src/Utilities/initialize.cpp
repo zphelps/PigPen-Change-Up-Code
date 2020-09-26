@@ -1,6 +1,8 @@
 #include "main.h"
 
 int autonIndex = 0;
+pros::ADIDigitalIn forwardSelectorLimit({21, 'C'});
+pros::ADIDigitalIn backwardSelectorLimit({21, 'D'});
 
 const int autoCount = 5;
 const char *autoNames[autoCount] = {
@@ -44,12 +46,20 @@ void autonSelector(void *parameter)
     while (true)
     {
 
-        if (indexerLimit.get_value())
+        if (forwardSelectorLimit.get_value())
         {
             autonIndex = autonIndex + 1;
             if (autonIndex == autoCount)
                 autonIndex = 0;
 
+            pros::lcd::print(6, "%s", autoNames[autonIndex]);
+            wait(300);
+        }
+        else if (backwardSelectorLimit.get_value())
+        {
+            autonIndex = autonIndex - 1;
+            if (autonIndex == autoCount)
+                autonIndex = 0;
             pros::lcd::print(6, "%s", autoNames[autonIndex]);
             wait(300);
         }
@@ -62,7 +72,8 @@ void initialize()
 
     pros::Task calcPos(calculate_position); //Begin position tracking
     pros::Task lcd_task(autonSelector);
-
+    initVision();
+    //pros::lcd::print(4, "%d", frontRollerLine.get_value());
     pros::lcd::set_text(6, "<Select an Autonomous>");
 
     lcd_task.set_priority(LV_TASK_PRIO_LOW); //Task infinite loop bug fix

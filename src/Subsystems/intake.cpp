@@ -9,10 +9,34 @@ pros::Motor indexerMotor(20, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCO
 //Sensors
 pros::ADIDigitalIn indexerLimit('G');
 pros::ADIDigitalIn intakeLimit('H');
-pros::ADIDigitalIn test({1, 'H'});
-pros::Vision vision_sensor(16);
+pros::ADILineSensor frontRollerLine({21, 'E'});
+pros::ADILineSensor topRollerLine({21, 'B'});
+pros::Vision vision(10);
+pros::Vision vision2(8);
 
-int stopLoading = 0;
+//Vision Sensor
+#define BLUE_ID 1
+#define RED_ID 2
+
+pros::vision_signature_s_t BLUE_BALL;
+pros::vision_signature_s_t RED_BALL;
+
+int BALL_DETECTED_SIGNATURE = 2500;
+
+static int INTAKE_MODE = 0;
+
+void initVision()
+{
+    BLUE_BALL = pros::Vision::signature_from_utility(BLUE_ID, -3461, -2325, -2893, 8235, 11659, 9947, 3.200, 0);
+
+    RED_BALL = pros::Vision::signature_from_utility(RED_ID, 6495, 8301, 7398, -311, 403, 46, 5.000, 0);
+
+    vision.set_signature(BLUE_ID, &BLUE_BALL);
+    vision.set_signature(RED_ID, &RED_BALL);
+
+    vision2.set_signature(BLUE_ID, &BLUE_BALL);
+    vision2.set_signature(RED_ID, &RED_BALL);
+}
 
 void frontRollers(int speed)
 {
@@ -59,53 +83,48 @@ void intakeManager(void *parameter)
 {
     while (1)
     {
-        if (intakeLimit.get_value() == 1)
+        switch (INTAKE_MODE)
         {
-            indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        case 0:
             intake(0);
-            indexer(-20);
-            wait(100);
             indexer(0);
-        }
-        else
-        {
-            indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+            frontRollers(0);
+            break;
+        case 1: //load one ball while intake is empty
+            if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+            {
+                intake(0);
+                indexer(-127);
+                frontRollers(0);
+            }
+            else
+            {
+                intake(127);
+                frontRollers(127);
+                indexer(50);
+            }
+            break;
+        case 2: //load one ball while intake has a ball in it
+            if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+            {
+                intake(0);
+                indexer(0);
+                frontRollers(127);
+            }
+            else
+            {
+                intake(127);
+                frontRollers(127);
+                indexer(50);
+            }
+            break;
         }
     }
 }
 
-void loadOneBallAndReverse(void *parameter)
+void setIntakeMode(int mode)
 {
-    int count = 0;
-    while (count < 1)
-    {
-        frontRollers(127);
-        intake(85);
-        if (intakeLimit.get_value() == 1)
-        {
-            count++;
-            wait(100);
-        }
-    }
-    frontRollers(-127);
-    intake(0);
-}
-
-void loadOneBall(void *parameter)
-{
-    int count = 0;
-    while (count < 1)
-    {
-        frontRollers(127);
-        intake(127);
-        if (intakeLimit.get_value() == 1)
-        {
-            count++;
-            wait(300);
-        }
-    }
-    frontRollers(0);
-    intake(0);
+    INTAKE_MODE = mode;
 }
 
 void scoreOneBall()
@@ -120,6 +139,27 @@ void scoreOneBall()
     wait(200); //200
     indexer(0);
     intake(0);
+}
+
+void scoreOneBallWithVision()
+{
+    while (indexerLimit.get_value() == 0)
+    {
+        indexer(127);
+        intake(127);
+    }
+    intake(0);
+    wait(200);
+    indexer(0);
+    while (true)
+    {
+        pros::vision_object_s_t obj = vision2.get_by_size(0);
+
+        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
+        {
+            break;
+        }
+    }
 }
 
 void scoreOneBall(int timeout)
@@ -162,195 +202,49 @@ void scoreOneBallWithWait()
     intake(0);
     wait(200);
     indexer(0);
-}
+    while (true)
+    {
+        pros::vision_object_s_t obj = vision2.get_by_size(0);
 
-void scoreOneBallWithFrontRollers()
-{
-    int intakeCount = 0;
-    int indexerCount = 0;
-    frontRollers(127);
-    while (intakeCount < 2)
-    {
-        left(50);
-        right(50);
-        indexer(127);
-        intake(127);
-        if (intakeLimit.get_value() == 1)
+        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
         {
-            intakeCount++;
-            wait(75);
+            break;
         }
-        if (indexerLimit.get_value() == 1)
-        {
-            indexerCount++;
-            wait(75);
-        }
-    }
-    master.print(0, 0, "%d", indexerCount);
-    frontRollers(-127);
-    if (indexerCount <= 2)
-    {
-        scoreOneBall();
     }
 }
 
-void scoreBalls(int time)
+void loadBall()
 {
-    while (indexerLimit.get_value() == 0)
+    while (frontRollerLine.get_value() > BALL_DETECTED_SIGNATURE)
     {
-        indexer(127);
+        frontRollers(127);
         intake(127);
     }
-    wait(200);
-    intake(-10);
-    indexer(-127);
-    wait(200);
-    intake(127);
-    indexer(127);
-    wait(time);
+    frontRollers(0);
     intake(0);
-    indexer(0);
 }
 
-void countThreeBlue()
+void visionTest()
 {
-    while (intakeLimit.get_value() == 0)
-    {
-        frontRollers(127);
-        intake(127);
-    }
-    scoreOneBall();
-}
-
-// void visionTest()
-// {
-//     while (true)
-//     {
-//         vision_object_s_t returnRed = vision_sensor.get_by_sig(0, RED_BALL);
-//         vision_object_s_t returnBlue = vision_sensor.get_by_sig(0, BLUE_BALL);
-//     }
-// }
-void oneRedOneBlue()
-{
-    int count = 0;
-    scoreOneBall();
-
-    while (intakeLimit.get_value() == 0)
-    {
-        left(44);
-        right(44);
-        frontRollers(127);
-        intake(75);
-        // if (intakeLimit.get_value() == 1)
-        // {
-        //    // count++;
-        //     wait(300);
-        // }
-    }
-    intakeFullStop();
-    frontRollers(-127);
-    intake(127);
-    //scoreOneBallWithWait();
-    wait(500);
-
-    while (intakeLimit.get_value() == 0)
-    {
-        left(35);
-        right(35);
-        frontRollers(127);
-        intake(75);
-        // if (intakeLimit.get_value() == 1)
-        // {
-        //    // count++;
-        //     wait(300);
-        // }
-    }
-    intakeFullStop();
-    scoreOneBall();
-    wait(500);
-    intakeFullReverse();
-    wait(500);
-    //intake(127);
-    //indexer(127);
-    //frontRollers(0);
-
-    //for (int i = 0; i < 2; i++)
-    // if (count > 2)
+    // while (1)
     // {
-    //     intake(0);
-    //     frontRollers(0);
+
+    //     pros::vision_object_s_t obj = vision2.get_by_size(0);
+    //     driveOP();
+    //     if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
+    //     {
+    //         frontRollers(127);
+    //         intake(127);
+    //     }
+    //     else
+    //     {
+    //         break;
+    //     }
     // }
-}
-
-void cycleBlueRed()
-{
-    for (int i = 0; i < 2; i++)
-    {
-        while (intakeLimit.get_value() == 0)
-        {
-            left(45);
-            right(45);
-            frontRollers(127);
-            intake(127);
-        }
-        wait(300);
-        intake(0);
-        frontRollers(0);
-    }
-    scoreOneBall();
-}
-
-void topBallSwitch(int timeout)
-{
-    int time = 0;
-    while (indexerLimit.get_value() == 0)
-    {
-        intake(127);
-        indexer(127);
-    }
-    while (intakeLimit.get_value() == 0 && time < timeout)
-    {
-        left(40);
-        right(40);
-        intake(127);
-        frontRollers(127);
-        time++;
-        wait(1);
-    }
-    intakeFullStop();
-}
-
-void topBallSwitch()
-{
-    while (indexerLimit.get_value() == 0)
-    {
-        intake(127);
-        indexer(127);
-    }
-    while (intakeLimit.get_value() == 0)
-    {
-        intake(127);
-        frontRollers(127);
-    }
-    intakeFullStop();
-}
-
-void intakeTests()
-{
-    int count = 0;
-
-    while (count < 2)
-    {
-        intake(127);
-        indexer(127);
-        frontRollers(127);
-        if (indexerLimit.get_value() == 1)
-        {
-            count++;
-            wait(300);
-        }
-    }
-    intakeFullStop();
+    // intake(0);
+    // frontRollers(0);
+    scoreOneBallWithVision();
+    timedDrive(500, -127);
 }
 
 //Driver Skills Intake Macros
@@ -471,11 +365,57 @@ void twoBlueCycleThreeRed()
 
 void twoBlueCycleTwoRed()
 {
-    frontRollers(127);
+    scoreOneBall();
+
+    while (frontRollerLine.get_value() > BALL_DETECTED_SIGNATURE)
+    {
+        driveOP();
+        frontRollers(127);
+        intake(127);
+    }
+    wait(250);
+    left(40);
+    right(40);
     scoreOneBall();
     wait(250);
-    scoreOneBall();
-    //intakeReverseFor(2000, 1000);
+    while (true)
+    {
+        driveOP();
+        if (frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            frontRollers(127);
+            //wait(250);
+        }
+        else
+        {
+            intake(127);
+            frontRollers(127);
+            if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+            {
+                break;
+            }
+        }
+    }
+    left(40);
+    right(40);
+    wait(250);
+    //scoreOneBall();
+    // frontRollers(127);
+    // wait(200);
+    frontRollers(0);
+    if (frontRollerLine.get_value() > BALL_DETECTED_SIGNATURE)
+    {
+        while (frontRollerLine.get_value() > BALL_DETECTED_SIGNATURE)
+        {
+            driveOP();
+            //frontRollers(127);
+            intake(127);
+        }
+    }
+    intake(-127);
+    frontRollers(-127);
+    wait(250);
+    timedDrive(200, -127);
 }
 
 void twoBlueCycleTwoRedAuton()
@@ -536,11 +476,27 @@ void intakeOP()
 
     if (master.get_digital(DIGITAL_R1) || partner.get_digital(DIGITAL_L2))
     {
-        if (intakeLimit.get_value() == 1)
+        indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+        pros::vision_object_s_t obj = vision.get_by_size(0);
+
+        if ((intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE) && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100) && frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            frontRollers(0);
+            intake(0);
+            indexer(0);
+        }
+        else if (intakeLimit.get_value() == 1 && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            indexer(30);
+            intake(75);
+            frontRollers(127);
+        }
+        else if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
         {
             indexer(0);
             frontRollers(127);
-            indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+            intake(0);
         }
         else
         {
@@ -557,38 +513,41 @@ void intakeOP()
     {
         intakeReverseFor(750);
     }
+    else if (master.get_digital(DIGITAL_UP))
+    {
+        //visionTest();
+        // pros::Task i(intakeManager);
+        // setIntakeMode(1);
+        // wait(1000);
+        // setIntakeMode(0);
+        // wait(1000);
+        // setIntakeMode(1);
+        // wait(1000);
+        // i.remove();
+    }
+    else if (master.get_digital(DIGITAL_LEFT))
+    {
+        twoBlueCycleTwoRed();
+    }
     else if (master.get_digital(DIGITAL_L1) || partner.get_digital(DIGITAL_L1))
     {
         indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
         frontRollers(0);
-
         if (indexerLimit.get_value() == 1)
         {
-            intake(0);
-            wait(200); //250
-            indexer(-50);
-            wait(150); //150
-        }
-        else if (intakeLimit.get_value() == 0)
-        {
-            indexerVelocity(600);
-            intake(127);
+            while (indexerLimit.get_value() == 1)
+            {
+                driveOP();
+                indexer(127);
+                intake(0);
+            }
+            wait(100);
         }
         else
         {
-            indexerVelocity(600);
-            intake(0);
+            indexer(127);
+            intake(127);
         }
-    }
-    else if (master.get_digital(DIGITAL_LEFT) || partner.get_digital(DIGITAL_LEFT))
-    {
-        indexer(-127);
-        intake(127);
-    }
-    else if (master.get_digital(DIGITAL_DOWN) || partner.get_digital(DIGITAL_DOWN))
-    {
-        indexer(-127);
-        intake(-127);
     }
     else
     {

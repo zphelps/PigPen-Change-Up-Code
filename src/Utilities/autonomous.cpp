@@ -147,30 +147,33 @@ void home_row_right_cycle()
 
 void home_row_right_no_cycle()
 {
+    setIntakeMode(2);
     setCoordinates(0, 24, 0);
     sweepRight(135, 0, 1.5, 25);
-    frontRollers(127);
+    //frontRollers(127);
     move(8, 135, 0, 0.2, 35, 0.2);
     timedDrive(300, 30); //300
-    frontRollers(0);
+    //frontRollers(0);
+    setIntakeMode(0);
     scoreOneBall();
-    intake(90);
-    frontRollers(-127);
+    setIntakeMode(1);
+    // intake(90);
+    // frontRollers(-127);
 
     moveBack(8, 135, 0, true); //10
-    fullIntake(127);
+    //fullIntake(127);
     sweepLeftBack(90, 0, 15, 5, 100);
     moveBackToYCoord(56, 90, 0, 6, 30, 0.6); //0.8
     //58
 
-    indexer(-127);
     turn(180);
     indexer(0);
-    intakeFullStop();
+    // intakeFullStop();
     move(10, 180, 0, 0.3, 40, 0.2); //8
     timedDrive(100, 30);
+    setIntakeMode(0);
     scoreOneBall();
-    intakeFullReverse();
+    //intakeFullReverse();
 
     moveBack(14, 180, 2, 0.15, 30, 0.2);
     turn(270);
@@ -393,6 +396,8 @@ void programming_skills()
 
 void autonomous()
 {
+    pros::Task intake_manager(intakeManager);
+    intake_manager.set_priority(TASK_PRIORITY_MIN);
     // turn(90);
     // wait(250);
     // turn(180);
@@ -422,4 +427,6 @@ void autonomous()
         programming_skills();
         break;
     }
+
+    intake_manager.remove();
 }

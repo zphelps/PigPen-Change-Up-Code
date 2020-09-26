@@ -32,7 +32,6 @@ using namespace okapi;
 
 extern pros::Controller master;
 extern pros::Controller partner;
-extern pros::ADIDigitalIn indexerLimit;
 extern int autonIndex;
 
 #ifdef __cplusplus

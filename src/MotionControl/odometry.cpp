@@ -1,9 +1,9 @@
 #include "main.h"
 
 //Tracking Encoders Constructors
-pros::ADIEncoder R('E', 'F', true);
-pros::ADIEncoder L('A', 'B', false);
-pros::ADIEncoder S('C', 'D', false);
+pros::ADIEncoder R('E', 'F', false);
+pros::ADIEncoder L('C', 'D', false);
+pros::ADIEncoder S('A', 'B', true);
 
 double xglobal;
 double yglobal;
