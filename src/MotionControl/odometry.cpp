@@ -79,7 +79,7 @@ void calculate_position(void *parameter)
         xglobal = xglobal + (chord2 * -sinP);
         yglobal = yglobal - (chord2 * cosP);
 
-        pros::delay(1);
+        //pros::delay(1);
 
         pros::lcd::print(1, "Theta: %f", thetaInDegrees);
 

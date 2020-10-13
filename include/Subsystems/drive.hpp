@@ -118,3 +118,5 @@ void sweepLeftBack(int degrees, int rightSideSpeed);
 void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold);
 
 void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed);
+
+void moveToPoint(int x, int y, int theta);

@@ -26,8 +26,8 @@ int POINT_TURN_MIN_SPEED = 15; //Re-caculated everytime we make large changes to
 
 const double WHEEL_DIAMETER = 2.75;
 const int TICS_PER_REVOLUTION = 360;
-const double LEFT_OFFSET = 5.9;  //5.87
-const double RIGHT_OFFSET = 5.9; //5.87
+const double LEFT_OFFSET = 5.95;  //5.9
+const double RIGHT_OFFSET = 5.95; //5.9
 const double REAR_OFFSET = 5.75;
 
 //Acceleration Step Variables
@@ -224,15 +224,15 @@ void initializeInertialSensor()
 //**************************Drive OPControl*************************************
 void driveOP()
 {
-    // leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
-    // leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
-    // rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.8);
-    // rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.8);
+    leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
+    leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
+    rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.8);
+    rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.8);
 
-    leftFront.move(master.get_analog(ANALOG_LEFT_Y));
-    leftBack.move(master.get_analog(ANALOG_LEFT_Y));
-    rightFront.move(master.get_analog(ANALOG_RIGHT_Y));
-    rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
+    // leftFront.move(master.get_analog(ANALOG_LEFT_Y));
+    // leftBack.move(master.get_analog(ANALOG_LEFT_Y));
+    // rightFront.move(master.get_analog(ANALOG_RIGHT_Y));
+    // rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
 }
 
 //Separate x drive model control allows for modular drive code
@@ -457,6 +457,7 @@ void moveFluid(int distance, int heading, int accelStep)
         }
     }
 }
+
 /**
  * @brief This function uses the position tracking system to move to a desired Y-coordinate, causing the forward movements to be more accurate
  * 
@@ -1475,7 +1476,7 @@ void moveBackToYCoord(int distance, int heading, int accelStep, bool fluid)
 
     if (fluid)
     {
-        moveFluid(distance, heading, accelStep);
+        moveBackToYCoordFluid(distance, heading, accelStep);
     }
 
     double correctionMultiplier = 0.2;
@@ -2508,7 +2509,7 @@ void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold)
 
     while (getTheta() < degrees - errorThreshhold)
     {
-        right(sweepTurnPIDFluid.getOutput(degrees, getTheta()));
+        right(-sweepTurnPIDFluid.getOutput(degrees, getTheta()));
         left(leftSideSpeed);
     }
 }
@@ -2654,4 +2655,66 @@ void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold, double 
         left(tempSweepTurnPIDFluid.getOutput(degrees, getTheta()));
         right(rightSideSpeed);
     }
+}
+
+void moveToPoint(int x, int y, int theta)
+{
+
+    double accelStep = 0.1;
+
+    double correctionMultiplier = 0.2;
+
+    double target = sqrt(pow(x - getX(), 2) + pow(y - getY(), 2));
+
+    double heading = asin((y - getY()) / target);
+
+    while (target > 2)
+    {
+
+        double PIDSpeed = (movePID.getOutput(target, L.get_value()));
+
+        if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+        {
+            if (getTheta() < heading)
+            {
+                slewRight(correctionMultiplier * PIDSpeed, accelStep);
+                slewLeft(PIDSpeed, accelStep);
+            }
+
+            if (getTheta() > heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(correctionMultiplier * PIDSpeed, accelStep);
+            }
+
+            if (getTheta() == heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(PIDSpeed, accelStep);
+            }
+        }
+        else
+        {
+            if (getTheta() < heading)
+            {
+                slewRight(PIDSpeed * 0.8, accelStep); //0.8
+                slewLeft(PIDSpeed, accelStep);
+            }
+
+            if (getTheta() > heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(PIDSpeed * 0.8, accelStep);
+            }
+
+            if (getTheta() == heading)
+            {
+                slewRight(PIDSpeed, accelStep);
+                slewLeft(PIDSpeed, accelStep);
+            }
+        }
+    }
+
+    leftSideSpeed = 0;
+    rightSideSpeed = 0;
 }
