@@ -37,6 +37,8 @@ void timedDrive(int time, int speed);
 
 void driveOP();
 
+void driveOPSlow();
+
 void xdriveOP();
 
 void checkInertial(int expectedAngle);

@@ -224,15 +224,18 @@ void initializeInertialSensor()
 //**************************Drive OPControl*************************************
 void driveOP()
 {
+    leftFront.move(master.get_analog(ANALOG_LEFT_Y));
+    leftBack.move(master.get_analog(ANALOG_LEFT_Y));
+    rightFront.move(master.get_analog(ANALOG_RIGHT_Y));
+    rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
+}
+
+void driveOPSlow()
+{
     leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
     leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
     rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.8);
     rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.8);
-
-    // leftFront.move(master.get_analog(ANALOG_LEFT_Y));
-    // leftBack.move(master.get_analog(ANALOG_LEFT_Y));
-    // rightFront.move(master.get_analog(ANALOG_RIGHT_Y));
-    // rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
 }
 
 //Separate x drive model control allows for modular drive code

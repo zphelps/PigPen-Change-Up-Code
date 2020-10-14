@@ -253,8 +253,12 @@ void visionTest()
 void intakeReverseFor(int timeout)
 {
     int time = 0;
-    while (intakeLimit.get_value() == 0)
+    while (true)
     {
+        if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            break;
+        }
         driveOP();
         indexer(75);
         intake(75);
@@ -477,7 +481,6 @@ void intakeOP()
         indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
         pros::vision_object_s_t obj = vision.get_by_size(0);
-
         if ((intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE) && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100) && frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
         {
             frontRollers(0);
@@ -500,7 +503,7 @@ void intakeOP()
         {
             frontRollers(127);
             intake(127);
-            indexer(50);
+            indexer(100);
         }
     }
     else if (master.get_digital(DIGITAL_R2) || partner.get_digital(DIGITAL_R2))
@@ -554,52 +557,3 @@ void intakeOP()
         indexer(0);
     }
 }
-//Counting rollers from the top
-/*
-void findColorWhenRed()
-{
-    frontRollers(127);
-    when button pressed{
-        frontRollers(0);
-        if redBall{
-            moveRoller4(-127);
-            moveRoller3(127);
-            moveRoller2(-127);
-            moveRoller1(127);
-        }
-        else if blueBall{
-            moveRoller4(-127);
-            moveRoller3(127);
-            moveRoller2(127);
-        }
-    }
-}
-void findColorWhenBlue()
-{
-    frontRollers(127);
-    when button pressed{
-        frontRollers(0);
-        if blueBall{
-            moveRoller4(-127);
-            moveRoller3(127);
-            moveRoller2(-127);
-            moveRoller1(127);
-        }
-        else if redBall{
-            moveRoller4(-127);
-            moveRoller3(127);
-            moveRoller2(127);
-        }
-    }
-}
-void oneBlueOneRedWithRedCycle()//or oneRedWithOneBlueCycle
-{
-    moveFoward
-    findColor();//Do this 3 times with waits in between
-}
-void oneRedOneBlueWithBlueCycle()// or oneBlueWithOneRedCycle
-{
-    moveForward
-    findColor();//Do this twice with waits in between
-}
-*/
