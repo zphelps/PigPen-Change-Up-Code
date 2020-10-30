@@ -11,24 +11,25 @@ pros::ADIDigitalIn indexerLimit('G');
 pros::ADIDigitalIn intakeLimit('H');
 pros::ADILineSensor frontRollerLine({21, 'E'});
 pros::ADILineSensor topRollerLine({21, 'B'});
-pros::Vision vision(10);
 pros::Vision vision2(7);
 
+int BALL_DETECTED_SIGNATURE = 2500;
+
 //Vision Sensor
+pros::Vision vision(10); //Construct vision object
+
 #define BLUE_ID 1
 #define RED_ID 2
 
 pros::vision_signature_s_t BLUE_BALL;
 pros::vision_signature_s_t RED_BALL;
 
-int BALL_DETECTED_SIGNATURE = 2500;
-
 void initVision()
 {
+    //Set blue and red ball vision siginatures
     BLUE_BALL = pros::Vision::signature_from_utility(BLUE_ID, -3461, -2325, -2893, 8235, 11659, 9947, 3.200, 0);
-
     RED_BALL = pros::Vision::signature_from_utility(RED_ID, 6495, 8301, 7398, -311, 403, 46, 5.000, 0);
-
+    //Set vision signature to BLUE_ID and RED_ID
     vision.set_signature(BLUE_ID, &BLUE_BALL);
     vision.set_signature(RED_ID, &RED_BALL);
 
@@ -210,42 +211,45 @@ void loadBall()
 
 void visionTest()
 {
-    scoreOneBallWithVision();
     while (1)
     {
-
-        pros::vision_object_s_t obj = vision2.get_by_size(0);
-        driveOP();
-        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
+        //Take snapshot and find return the biggest object of sig -> BLUE_ID
+        pros::vision_object_s_t obj = vision2.get_by_sig(0, BLUE_ID);
+        //If the object returned is bigger thatn 100 pixels -> stop
+        if (obj.signature != VISION_OBJECT_ERR_SIG && obj.width > 100)
         {
             frontRollers(127);
             intake(127);
         }
+        //Run the front rollers and intake until the ball is no longer detected
         else
         {
+            intakeFullStop();
             break;
         }
     }
-    frontRollers(0);
-    intake(0);
-    scoreOneBallWithVision();
+}
+
+void autoSort()
+{
+    //Sort for red balls
     while (1)
     {
-
-        pros::vision_object_s_t obj = vision2.get_by_size(0);
-        driveOP();
-        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
+        //Take snapshot and find return the biggest object
+        pros::vision_object_s_t obj = vision.get_by_size(0);
+        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID) && obj.width > 100)
+        {
+            indexer(-127);
+            wait(300); //wait for the ball to exit the robot
+            break;
+        }
+        else
         {
             frontRollers(127);
             intake(127);
-        }
-        else
-        {
-            break;
+            indexer(127);
         }
     }
-    intake(0);
-    frontRollers(0);
 }
 
 //Driver Skills Intake Macros
@@ -517,14 +521,6 @@ void intakeOP()
     else if (master.get_digital(DIGITAL_UP))
     {
         visionTest();
-        // pros::Task i(intakeManager);
-        // setIntakeMode(1);
-        // wait(1000);
-        // setIntakeMode(0);
-        // wait(1000);
-        // setIntakeMode(1);
-        // wait(1000);
-        // i.remove();
     }
     else if (master.get_digital(DIGITAL_LEFT))
     {
