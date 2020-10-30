@@ -1,5 +1,9 @@
 #include "main.h"
 
+/**
+ * @brief odom declarations
+ * 
+ */
 extern pros::ADIEncoder R;
 extern pros::ADIEncoder L;
 extern pros::ADIEncoder S;

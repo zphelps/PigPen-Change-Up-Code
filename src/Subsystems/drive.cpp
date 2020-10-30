@@ -34,6 +34,7 @@ double correctionMultiplier = 0.2;
 
 int LINE_DETECTED = 600;
 
+//Move task helper methods
 void Drive::moveStartTask()
 {
     move_task = new pros::Task(moveTask);
@@ -49,6 +50,7 @@ void Drive::moveStopTask()
     }
 }
 
+//turn task helper methods
 void Drive::turnStartTask()
 {
     turn_task = new pros::Task(turnTask);
@@ -147,6 +149,12 @@ void Drive::timedDrive(int time, int l, int r)
     drivePower(0, 0);
 }
 
+/**
+ * @brief drives to align perpendicularly with line for theta reset
+ * 
+ * @param speed 
+ * @param timeout 
+ */
 void Drive::untilLineDetected(int speed, int timeout)
 {
     brake();
@@ -205,6 +213,7 @@ void Drive::untilLineDetected(int speed, int timeout)
 
 void Drive::brake()
 {
+    //set motor brake modes to HOLD
     rightFront.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     rightBack.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     leftFront.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -213,6 +222,7 @@ void Drive::brake()
 
 void Drive::coast()
 {
+    //set motor brake modes to COAST
     rightFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     rightBack.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     leftFront.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -221,9 +231,10 @@ void Drive::coast()
 
 void Drive::driveOP(int driveMode)
 {
+    //Switch between two drive modes
     switch (driveMode)
     {
-    case 0:
+    case 0: //Match play
     {
         leftFront.move(master.get_analog(ANALOG_LEFT_Y));
         leftBack.move(master.get_analog(ANALOG_LEFT_Y));
@@ -231,7 +242,7 @@ void Drive::driveOP(int driveMode)
         rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
         break;
     }
-    case 1:
+    case 1: //Driver Skills
     {
         leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
         leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.8);
@@ -242,6 +253,15 @@ void Drive::driveOP(int driveMode)
     }
 }
 
+/**
+ * @brief Helper method that maintains the drive's target heading
+ * 
+ * @param heading 
+ * @param correctionMultiplier 
+ * @param PIDSpeed 
+ * @param accelStep 
+ * @param backward 
+ */
 void Drive::moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward)
 {
     if (backward == false)
@@ -408,6 +428,12 @@ void Drive::moveHeadingCorrection(int heading, double correctionMultiplier, doub
     */
 }
 
+/**
+ * @brief Temporarily change correctionMultiplier on any movement in moveTask()
+ * 
+ * @param cM 
+ * @return Drive& 
+ */
 Drive &Drive::withCorrection(double cM)
 {
     correctionMultiplier = cM;
@@ -415,18 +441,46 @@ Drive &Drive::withCorrection(double cM)
     return *this;
 }
 
+/**
+ * @brief Temporarily change the gains on any movement in moveTask()
+ * 
+ * @param kP 
+ * @param kI 
+ * @param kD 
+ * @param minSpeed 
+ * @return Drive& 
+ */
 Drive &Drive::withGains(double kP, double kI, double kD, int minSpeed)
 {
     movePID.setGains(kP, kI, kD, minSpeed);
     return *this;
 }
 
+/**
+ * @brief Temporarily change the gains on any turn in turnTask()
+ * 
+ * @param kP 
+ * @param kI 
+ * @param kD 
+ * @param minSpeed 
+ * @return Drive& 
+ */
 Drive &Drive::withTurnGains(double kP, double kI, double kD, int minSpeed)
 {
     turnPID.setGains(kP, kI, kD, minSpeed);
     return *this;
 }
 
+/**
+ * @brief drive for distance in inches
+ * 
+ * @param distance 
+ * @param heading 
+ * @param accelStep 
+ * @param async 
+ * @param fluid 
+ * @return Drive& 
+ */
 Drive &Drive::move(int distance, int heading, int accelStep, bool async, bool fluid)
 {
     if (!moveComplete)
@@ -437,21 +491,34 @@ Drive &Drive::move(int distance, int heading, int accelStep, bool async, bool fl
     {
         move_task = nullptr;
     }
+    //set move targets
     moveTargets = {distance, heading, accelStep, fluid, MOVE_FOR_DISTANCE};
     driveError = 0;
     moveComplete = false;
     if (async)
     {
+        //call as task
         moveStartTask();
     }
     else
     {
+        //call as method (syncronous)
         moveTask(nullptr);
     }
 
     return *this;
 }
 
+/**
+ * @brief move forward to Y coordinate
+ * 
+ * @param distance 
+ * @param heading 
+ * @param accelStep 
+ * @param async 
+ * @param fluid 
+ * @return Drive& 
+ */
 Drive &Drive::moveToYCoord(int distance, int heading, int accelStep, bool async, bool fluid)
 {
     if (!moveComplete)
@@ -462,6 +529,7 @@ Drive &Drive::moveToYCoord(int distance, int heading, int accelStep, bool async,
     {
         move_task = nullptr;
     }
+    //set move targets
     moveTargets = {distance, heading, accelStep, fluid, MOVE_TO_Y_COORD};
     driveError = 0;
     moveComplete = false;
@@ -477,6 +545,16 @@ Drive &Drive::moveToYCoord(int distance, int heading, int accelStep, bool async,
     return *this;
 }
 
+/**
+ * @brief move forward to X coordinate
+ * 
+ * @param distance 
+ * @param heading 
+ * @param accelStep 
+ * @param async 
+ * @param fluid 
+ * @return Drive& 
+ */
 Drive &Drive::moveToXCoord(int distance, int heading, int accelStep, bool async, bool fluid)
 {
     if (!moveComplete)
@@ -487,6 +565,7 @@ Drive &Drive::moveToXCoord(int distance, int heading, int accelStep, bool async,
     {
         move_task = nullptr;
     }
+    //set move targets
     moveTargets = {distance, heading, accelStep, fluid, MOVE_TO_X_COORD};
     driveError = 0;
     moveComplete = false;
@@ -502,6 +581,16 @@ Drive &Drive::moveToXCoord(int distance, int heading, int accelStep, bool async,
     return *this;
 }
 
+/**
+ * @brief move back to Y coordinate
+ * 
+ * @param distance 
+ * @param heading 
+ * @param accelStep 
+ * @param async 
+ * @param fluid 
+ * @return Drive& 
+ */
 Drive &Drive::moveBackToYCoord(int distance, int heading, int accelStep, bool async, bool fluid)
 {
     if (!moveComplete)
@@ -512,6 +601,7 @@ Drive &Drive::moveBackToYCoord(int distance, int heading, int accelStep, bool as
     {
         move_task = nullptr;
     }
+    //set move targets
     moveTargets = {distance, heading, accelStep, fluid, MOVE_BACK_TO_Y_COORD};
     driveError = 0;
     moveComplete = false;
@@ -527,6 +617,16 @@ Drive &Drive::moveBackToYCoord(int distance, int heading, int accelStep, bool as
     return *this;
 }
 
+/**
+ * @brief move back to X coordinate
+ * 
+ * @param distance 
+ * @param heading 
+ * @param accelStep 
+ * @param async 
+ * @param fluid 
+ * @return Drive& 
+ */
 Drive &Drive::moveBackToXCoord(int distance, int heading, int accelStep, bool async, bool fluid)
 {
     if (!moveComplete)
@@ -537,6 +637,7 @@ Drive &Drive::moveBackToXCoord(int distance, int heading, int accelStep, bool as
     {
         move_task = nullptr;
     }
+    //set move targets
     moveTargets = {distance, heading, accelStep, fluid, MOVE_BACK_TO_X_COORD};
     driveError = 0;
     moveComplete = false;
@@ -556,7 +657,6 @@ void Drive::moveTask(void *parameter)
 {
     switch (moveTargets.moveType)
     {
-    //Case 1: Move forward for distance
     case MOVE_FOR_DISTANCE:
     {
         if (moveTargets.fluid && movePID.gainsAreAtDefaults())
@@ -566,11 +666,13 @@ void Drive::moveTask(void *parameter)
 
         if (moveTargets.targetDistance < 0)
         {
+            //Calculate target in inches
             double target = (L.get_value()) - TICS_PER_REVOLUTION * (abs(moveTargets.targetDistance) / (WHEEL_DIAMETER * PI));
             while (L.get_value() > target)
             {
                 double PIDSpeed = (movePID.getOutput(target, L.get_value()));
                 driveError = moveTargets.targetDistance - ((L.get_value() / TICS_PER_REVOLUTION) * (WHEEL_DIAMETER * PI));
+                //Move straight at heading
                 moveHeadingCorrection(moveTargets.targetHeading, correctionMultiplier, PIDSpeed, moveTargets.accelStep, true);
             }
         }
@@ -590,6 +692,7 @@ void Drive::moveTask(void *parameter)
             drivePower(0, 0);
         }
 
+        //set all modifiers back to defaults
         leftSideSpeed = 0;
         rightSideSpeed = 0;
         correctionMultiplier = 0.2;
@@ -598,7 +701,6 @@ void Drive::moveTask(void *parameter)
         moveStopTask();
         break;
     }
-    //Case 2: Move to X Coord
     case MOVE_TO_X_COORD:
     {
         if (moveTargets.fluid && movePID.gainsAreAtDefaults())
@@ -635,6 +737,7 @@ void Drive::moveTask(void *parameter)
             drivePower(0, 0);
         }
 
+        //set all modifiers back to defaults
         leftSideSpeed = 0;
         rightSideSpeed = 0;
         correctionMultiplier = 0.2;
@@ -680,6 +783,7 @@ void Drive::moveTask(void *parameter)
             drivePower(0, 0);
         }
 
+        //set all modifiers back to defaults
         leftSideSpeed = 0;
         rightSideSpeed = 0;
         correctionMultiplier = 0.2;
@@ -725,6 +829,7 @@ void Drive::moveTask(void *parameter)
             drivePower(0, 0);
         }
 
+        //set all modifiers back to defaults
         leftSideSpeed = 0;
         rightSideSpeed = 0;
         correctionMultiplier = 0.2;
@@ -770,6 +875,7 @@ void Drive::moveTask(void *parameter)
             drivePower(0, 0);
         }
 
+        //set all modifiers back to defaults
         leftSideSpeed = 0;
         rightSideSpeed = 0;
         correctionMultiplier = 0.2;
@@ -785,6 +891,12 @@ void Drive::moveTask(void *parameter)
 //******************************************************************************
 //**************************Turn Functions**************************************
 
+/**
+ * @brief turn for degrees
+ * 
+ * @param degrees 
+ * @return Drive& 
+ */
 Drive &Drive::turn(int degrees)
 {
     if (!turnComplete)
@@ -803,6 +915,13 @@ Drive &Drive::turn(int degrees)
     return *this;
 }
 
+/**
+ * @brief sweep right
+ * 
+ * @param degrees 
+ * @param rightSideSpeed 
+ * @return Drive& 
+ */
 Drive &Drive::sweepRight(int degrees, int rightSideSpeed)
 {
     if (!turnComplete)
@@ -821,6 +940,14 @@ Drive &Drive::sweepRight(int degrees, int rightSideSpeed)
     return *this;
 }
 
+/**
+ * @brief sweep right fluidly into another movement
+ * 
+ * @param degrees 
+ * @param rightSideSpeed 
+ * @param errorThreshhold 
+ * @return Drive& 
+ */
 Drive &Drive::sweepRight(int degrees, int rightSideSpeed, int errorThreshhold)
 {
     if (!turnComplete)
@@ -839,6 +966,13 @@ Drive &Drive::sweepRight(int degrees, int rightSideSpeed, int errorThreshhold)
     return *this;
 }
 
+/**
+ * @brief sweep left
+ * 
+ * @param degrees 
+ * @param leftSideSpeed 
+ * @return Drive& 
+ */
 Drive &Drive::sweepLeft(int degrees, int leftSideSpeed)
 {
     if (!turnComplete)
@@ -857,6 +991,14 @@ Drive &Drive::sweepLeft(int degrees, int leftSideSpeed)
     return *this;
 }
 
+/**
+ * @brief sweep left fluidly into another movement
+ * 
+ * @param degrees 
+ * @param leftSideSpeed 
+ * @param errorThreshhold 
+ * @return Drive& 
+ */
 Drive &Drive::sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold)
 {
     if (!turnComplete)
@@ -875,6 +1017,13 @@ Drive &Drive::sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold)
     return *this;
 }
 
+/**
+ * @brief sweep right backwards
+ * 
+ * @param degrees 
+ * @param leftSideSpeed 
+ * @return Drive& 
+ */
 Drive &Drive::sweepRightBack(int degrees, int leftSideSpeed)
 {
     if (!turnComplete)
@@ -893,6 +1042,14 @@ Drive &Drive::sweepRightBack(int degrees, int leftSideSpeed)
     return *this;
 }
 
+/**
+ * @brief sweep right backwards fluidly
+ * 
+ * @param degrees 
+ * @param leftSideSpeed 
+ * @param errorThreshhold 
+ * @return Drive& 
+ */
 Drive &Drive::sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold)
 {
     if (!turnComplete)
@@ -911,6 +1068,13 @@ Drive &Drive::sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold
     return *this;
 }
 
+/**
+ * @brief sweep left backwards fluidly
+ * 
+ * @param degrees 
+ * @param rightSideSpeed 
+ * @return Drive& 
+ */
 Drive &Drive::sweepLeftBack(int degrees, int rightSideSpeed)
 {
     if (!turnComplete)
@@ -929,6 +1093,14 @@ Drive &Drive::sweepLeftBack(int degrees, int rightSideSpeed)
     return *this;
 }
 
+/**
+ * @brief sweep left backwards fluidly
+ * 
+ * @param degrees 
+ * @param rightSideSpeed 
+ * @param errorThreshhold 
+ * @return Drive& 
+ */
 Drive &Drive::sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold)
 {
     if (!turnComplete)
@@ -1117,7 +1289,10 @@ void Drive::turnTask(void *parameter)
 
 //******************************************************************************
 //*************************Sweep Functions**************************************
-
+/**
+ * @brief helper method to block code until asynchronous movements are complete
+ * 
+ */
 void Drive::waitForComplete()
 {
     while (!moveComplete)

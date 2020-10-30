@@ -18,6 +18,7 @@ double thetaInRadians = 0;
 double thetaInDegrees = 0;
 double thetaInDegreesUncorrected = 0;
 
+//odom task definition
 pros::Task *odometryTask = nullptr;
 
 void odometryStartTask(bool reset)
@@ -33,8 +34,10 @@ void odometryStopTask()
 {
     if (odometryTask != nullptr)
     {
+        //Remove old odom task
         odometryTask->remove();
         delete odometryTask;
+        //set to null
         odometryTask = nullptr;
     }
 }
@@ -108,13 +111,14 @@ void calculate_position(void *parameter)
 
         wait(1);
 
+        //LCD Feedback
         pros::lcd::print(1, "Theta: %f", thetaInDegrees);
 
         pros::lcd::print(2, "X: %f", xglobal);
         pros::lcd::print(3, "Y: %f", yglobal);
 
-        pros::lcd::print(4, "R: %d", rightDriveLine.get_value());
-        pros::lcd::print(5, "L: %d", leftDriveLine.get_value());
+        pros::lcd::print(4, "R: %d", R.get_value());
+        pros::lcd::print(5, "L: %d", L.get_value());
         // pros::lcd::print(6, "S: %d", S.get_value());
     }
 }

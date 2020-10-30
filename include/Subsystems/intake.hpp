@@ -1,4 +1,5 @@
 
+//Intake sensors
 extern pros::ADIDigitalIn intakeLimit;
 extern pros::ADIDigitalIn indexerLimit;
 extern pros::ADILineSensor frontRollerLine;
@@ -20,6 +21,7 @@ extern pros::Vision vision;
 #define INTAKE 1
 #define INDEXER 2
 
+//Visions Functions
 void initVision();
 
 bool topBallDetected(int color);
@@ -29,6 +31,10 @@ void visionTest();
 
 extern int BALL_DETECTED_SIGNATURE;
 
+/**
+ * @brief Intake Class Header
+ * 
+ */
 class Intake
 {
 public:

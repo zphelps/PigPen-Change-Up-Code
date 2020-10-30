@@ -157,6 +157,11 @@ void Intake::stop()
     intake(0, 0, 0);
 }
 
+/**
+ * @brief brake specific subsystems
+ * 
+ * @param subsystem 
+ */
 void Intake::brake(int subsystem)
 {
     switch (subsystem)
@@ -177,6 +182,11 @@ void Intake::brake(int subsystem)
     }
 }
 
+/**
+ * @brief coast specific subsystems
+ * 
+ * @param subsystem 
+ */
 void Intake::coast(int subsystem)
 {
     switch (subsystem)
@@ -197,6 +207,10 @@ void Intake::coast(int subsystem)
     }
 }
 
+/**
+ * @brief intake code to prevent balls from getting pushed out the ball ejector rollers
+ * 
+ */
 void Intake::logic()
 {
     pros::vision_object_s_t obj = vision.get_by_size(0);
@@ -227,6 +241,12 @@ void Intake::manager(void *parameter)
     }
 }
 
+/**
+ * @brief eject ball with timeout
+ * 
+ * @param timeout 
+ * @param auton 
+ */
 void Intake::reverseFor(int timeout, bool auton)
 {
     if (auton)
@@ -323,6 +343,11 @@ void Intake::score(int numBalls, int timeout)
     }
 }
 
+/**
+ * @brief score ball by running indexer until ball is detected in goal by vision
+ * 
+ * @param timeout 
+ */
 void Intake::scoreWithVision(int timeout)
 {
     score(ONE_BALL);
@@ -384,7 +409,7 @@ void Intake::intakeOP()
     }
 }
 
-//Intake Macros:
+//Intake Macros (IN PROGRESS):
 
 void Intake::twoBlueCycleTwoRed()
 {
@@ -409,338 +434,3 @@ void Intake::twoBlueCycleTwoRed()
     wait(300);
     intake(0, 0, 0);
 }
-
-/*
-void descoreBottomBall(int timeout)
-{
-    int time = 0;
-    while (time < timeout)
-    {
-        pros::vision_object_s_t obj = vision2.get_by_size(0);
-
-        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
-        {
-            frontRollers(127);
-            // if (time < 200 || time > 400 && time < 600 || time > 800)
-            // {
-            //     drive(-30);
-            // }
-            // else
-            // {
-            //     drive(30);
-            // }
-        }
-        else
-        {
-            wait(100);
-            frontRollers(0);
-            break;
-        }
-        wait(1);
-        time++;
-    }
-}
-
-void frontRollers(int speed)
-{
-    rightRollerMotor.move(speed);
-    leftRollerMotor.move(speed);
-}
-
-void intake(int speed)
-{
-    mainRollerMotor.move(speed);
-}
-
-void fullIntake(int speed)
-{
-    frontRollers(127);
-    intake(127);
-}
-
-void indexer(int speed)
-{
-    indexerMotor.move(speed);
-}
-
-void indexerVelocity(int speed)
-{
-    indexerMotor.move_velocity(speed);
-}
-
-void intakeFullStop()
-{
-    intake(0);
-    indexer(0);
-    frontRollers(0);
-}
-
-void intakeFullReverse()
-{
-    intake(-127);
-    indexer(-127);
-    frontRollers(-127);
-}
-
-void intakeManager(void *parameter)
-{
-    while (1)
-    {
-        pros::vision_object_s_t obj = vision.get_by_size(0);
-
-        if ((intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE) && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100) && frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            frontRollers(0);
-            intake(0);
-            indexer(0);
-        }
-        else if (intakeLimit.get_value() == 1 && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            indexer(30);
-            intake(75);
-            frontRollers(127);
-        }
-        else if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            indexer(0);
-            frontRollers(127);
-            intake(0);
-        }
-        else
-        {
-            frontRollers(127);
-            intake(127);
-            indexer(50);
-        }
-    }
-}
-
-void scoreOneBallWithVision(int timeout)
-{
-    int time = 0;
-    while (indexerLimit.get_value() == 0 && time < timeout)
-    {
-        indexer(127);
-        intake(127);
-        wait(1);
-        time++;
-    }
-    intake(0);
-    wait(200);
-    indexer(-30);
-    while (time < timeout)
-    {
-        pros::vision_object_s_t obj = vision2.get_by_size(0);
-
-        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
-        {
-            break;
-        }
-
-        wait(1);
-        time++;
-    }
-    indexer(0);
-}
-
-void scoreOneBall(int timeout)
-{
-    indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    int time = 0;
-    while (indexerLimit.get_value() != 1 && time < timeout)
-    {
-        indexerVelocity(600);
-        intake(127);
-        wait(1);
-        time++;
-    }
-    intake(-20);
-    wait(200); //200
-    indexer(0);
-    intake(0);
-}
-
-void scoreOneBallInCenterGoal()
-{
-    while (indexerLimit.get_value() != 1)
-    {
-        indexer(110);
-        intake(127);
-    }
-    intake(0);
-    wait(200);
-    indexer(0);
-}
-
-void loadBall()
-{
-    while (frontRollerLine.get_value() > BALL_DETECTED_SIGNATURE)
-    {
-        frontRollers(127);
-        intake(127);
-    }
-    frontRollers(0);
-    intake(0);
-}
-
-void visionTest()
-{
-    scoreOneBallWithVision();
-    while (1)
-    {
-
-        pros::vision_object_s_t obj = vision2.get_by_size(0);
-        drive.driveOP(NORMAL_DRIVE);
-        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
-        {
-            frontRollers(127);
-            intake(127);
-        }
-        else
-        {
-            break;
-        }
-    }
-    frontRollers(0);
-    intake(0);
-    scoreOneBallWithVision();
-    while (1)
-    {
-
-        pros::vision_object_s_t obj = vision2.get_by_size(0);
-        drive.driveOP(NORMAL_DRIVE);
-        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
-        {
-            frontRollers(127);
-            intake(127);
-        }
-        else
-        {
-            break;
-        }
-    }
-    intake(0);
-    frontRollers(0);
-}
-
-void intakeReverseFor(int timeout)
-{
-    int time = 0;
-    while (true)
-    {
-        if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            break;
-        }
-        drive.driveOP(NORMAL_DRIVE);
-        indexer(75);
-        intake(75);
-        frontRollers(127);
-    }
-    while (time < 350)
-    {
-        frontRollers(0);
-        indexer(-127);
-        intake(-127);
-        wait(1);
-        time++;
-        drive.driveOP(NORMAL_DRIVE);
-    }
-    time = 0;
-    while (time < timeout)
-    {
-        drive.driveOP(NORMAL_DRIVE);
-        wait(1);
-        time++;
-        drive.driveOP(NORMAL_DRIVE);
-        indexer(-127);
-        intake(127);
-        frontRollers(127);
-    }
-    intakeFullStop();
-}
-
-void intakeOP()
-{
-    if (master.get_digital(DIGITAL_R1) || partner.get_digital(DIGITAL_L2))
-    {
-        indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
-        pros::vision_object_s_t obj = vision.get_by_size(0);
-        if ((intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE) && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100) && frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            frontRollers(0);
-            intake(0);
-            indexer(0);
-        }
-        else if (intakeLimit.get_value() == 1 && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            indexer(30);
-            intake(75);
-            frontRollers(127);
-        }
-        else if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            indexer(0);
-            frontRollers(127);
-            intake(0);
-        }
-        else
-        {
-            frontRollers(127);
-            intake(127);
-            indexer(100);
-        }
-    }
-    else if (master.get_digital(DIGITAL_R2) || partner.get_digital(DIGITAL_R2))
-    {
-        frontRollers(-127);
-    }
-    else if (master.get_digital(DIGITAL_L2))
-    {
-        intakeReverseFor(750);
-    }
-    else if (master.get_digital(DIGITAL_UP))
-    {
-        visionTest();
-        // pros::Task i(intakeManager);
-        // setIntakeMode(1);
-        // wait(1000);
-        // setIntakeMode(0);
-        // wait(1000);
-        // setIntakeMode(1);
-        // wait(1000);
-        // i.remove();
-    }
-    else if (master.get_digital(DIGITAL_LEFT))
-    {
-        twoBlueCycleTwoRed();
-    }
-    else if (master.get_digital(DIGITAL_L1) || partner.get_digital(DIGITAL_L1))
-    {
-        indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-        frontRollers(0);
-        if (indexerLimit.get_value() == 1)
-        {
-            while (indexerLimit.get_value() == 1)
-            {
-                drive.driveOP(NORMAL_DRIVE);
-                indexer(127);
-                intake(0);
-            }
-            wait(100);
-        }
-        else
-        {
-            indexer(127);
-            intake(127);
-        }
-    }
-    else
-    {
-        frontRollers(0);
-        intake(0);
-        indexer(0);
-    }
-}
-*/

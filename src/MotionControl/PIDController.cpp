@@ -14,6 +14,7 @@ PIDController::PIDController(double inKP, double inKI, double inKD, int inMinSpe
     kD = inKD;
     minSpeed = inMinSpeed;
 
+    //Stores initial values as defaults
     DEFAULT_KP = inKP;
     DEFAULT_KI = inKI;
     DEFAULT_KD = inKD;
@@ -132,6 +133,7 @@ void PIDController::setGains(double inKP, double inKI, double inKD, int inMinSpe
     minSpeed = inMinSpeed;
 }
 
+//Reset gains to stored defaults (see constructor)
 void PIDController::resetGainsToDefaults()
 {
     kP = DEFAULT_KP;
@@ -140,6 +142,7 @@ void PIDController::resetGainsToDefaults()
     minSpeed = DEFAULT_MINSPEED;
 }
 
+//Feedback
 bool PIDController::gainsAreAtDefaults()
 {
     if (kP == DEFAULT_KP && kI == DEFAULT_KI && kD == DEFAULT_KD && minSpeed == DEFAULT_MINSPEED)

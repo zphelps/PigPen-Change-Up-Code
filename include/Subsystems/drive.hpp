@@ -1,18 +1,20 @@
-#include "main.h"
 
-#define RIGHT_SIDE 0;
-#define LEFT_SIDE 1;
-#define BOTH_SIDES 2;
-
+//Motors
 extern pros::Motor frontRight;
 extern pros::Motor backLeft;
 extern pros::Motor frontLeft;
 extern pros::Motor backLeft;
 
+//Line Sensors
 extern pros::ADILineSensor rightDriveLine;
 extern pros::ADILineSensor leftDriveLine;
 
+//Externalize line sensor constant
 extern int LINE_DETECTED;
+
+#define RIGHT_SIDE 0;
+#define LEFT_SIDE 1;
+#define BOTH_SIDES 2;
 
 #define MOVE_FOR_DISTANCE 0
 #define MOVE_TO_X_COORD 1
@@ -33,6 +35,10 @@ extern int LINE_DETECTED;
 #define NORMAL_DRIVE 0
 #define SLOW_DRIVE 1
 
+/**
+ * @brief Move targets structure (see moveTask())
+ * 
+ */
 struct MoveTargets
 {
     int targetDistance;
@@ -42,6 +48,10 @@ struct MoveTargets
     int moveType;
 };
 
+/**
+ * @brief Turn targets structure (see turnTask())
+ * 
+ */
 struct TurnTargets
 {
     int degrees;
@@ -54,6 +64,10 @@ struct TurnTargets
 extern MoveTargets moveTargets;
 extern TurnTargets turnTargets;
 
+/**
+ * @brief Drive Class Header
+ * 
+ */
 class Drive
 {
 

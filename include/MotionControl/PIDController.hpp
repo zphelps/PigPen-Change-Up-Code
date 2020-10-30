@@ -1,4 +1,7 @@
-//PID Controller class header
+/**
+ * @brief PID Controller Class Header
+ * 
+ */
 class PIDController
 {
 private:
