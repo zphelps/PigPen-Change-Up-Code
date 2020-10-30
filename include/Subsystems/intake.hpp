@@ -4,35 +4,60 @@ extern pros::ADIDigitalIn indexerLimit;
 extern pros::ADILineSensor frontRollerLine;
 extern pros::ADILineSensor topRollerLine;
 
+//Vision Sensor
+#define BLUE_ID 1
+#define RED_ID 2
+#define ANY_COLOR 3
+
 extern pros::Vision vision2;
 extern pros::Vision vision;
 
-//Vision Methods
-void descoreBottomBall(int timeout = 2000);
+#define ONE_BALL 0
+#define TWO_BALLS 1
+#define THREE_BALLS 2
 
-//Currently Used
-void frontRollers(int speed);
-void intake(int speed);
-void indexer(int speed);
-void intakeFullReverse();
+#define FRONT_ROLLERS 0
+#define INTAKE 1
+#define INDEXER 2
 
 void initVision();
-void ejectBalls(void *parameter);
-void ejectOneBall(void *parameter);
 
-//Not Sure
-void loadOneBall(void *parameter);
-void scoreOneBall(int timeout = 2000);
-void scoreOneBallWithVision(int timeout = 2000);
-void scoreOneBallInCenterGoal();
-void scoreBalls(int time);
-void intakeFullStop();
-void intakeOP();
-void fullIntake(int speed);
-void scoreOneBallWithFrontRollers();
+bool topBallDetected(int color);
+bool intakeBallDetected(int color);
 
-void oneBlueCycleOneRed();
-void twoBlueCycleTwoRed();
-void twoBlueCycleTwoRedAuton();
+void visionTest();
 
-void intakeManager(void *parameter);
+extern int BALL_DETECTED_SIGNATURE;
+
+class Intake
+{
+public:
+    void frontRollers(int speed, int time = 0);
+    void intakeRollers(int speed, int time = 0);
+    void indexer(int speed, int time = 0);
+    void intake(int FRSpeed, int IRSpeed, int ISpeed);
+    void stop();
+
+    void brake(int subsystem);
+    void coast(int subsystem);
+
+    void logic();
+
+    void manager(void *parameter);
+
+    void reverseFor(int timeout, bool auton = false);
+
+    void intakeOP();
+
+    void score(int numBalls, int timeout = 2000);
+    void scoreWithVision(int timeout = 2000);
+
+    void twoBlueCycleThreeRed();
+    void twoBlueCycleTwoRed();
+    void twoBlueCycleOneRed();
+
+    void oneBlueCycleOneRed();
+    void oneBlueCycleTwoRed();
+};
+
+extern Intake intake;

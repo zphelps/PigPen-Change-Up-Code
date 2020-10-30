@@ -13,6 +13,11 @@ PIDController::PIDController(double inKP, double inKI, double inKD, int inMinSpe
     kI = inKI;
     kD = inKD;
     minSpeed = inMinSpeed;
+
+    DEFAULT_KP = inKP;
+    DEFAULT_KI = inKI;
+    DEFAULT_KD = inKD;
+    DEFAULT_MINSPEED = inMinSpeed;
 }
 
 /*
@@ -22,6 +27,8 @@ PIDController::PIDController(double inKP, int inMinSpeed)
 {
     kP = inKP;
     minSpeed = inMinSpeed;
+
+    DEFAULT_KP = inKP;
 }
 
 /*
@@ -115,6 +122,31 @@ int PIDController::getOutput(int error)
         power = -minSpeed;
     }
     return power;
+}
+
+void PIDController::setGains(double inKP, double inKI, double inKD, int inMinSpeed)
+{
+    kP = inKP;
+    kI = inKI;
+    kD = inKD;
+    minSpeed = inMinSpeed;
+}
+
+void PIDController::resetGainsToDefaults()
+{
+    kP = DEFAULT_KP;
+    kI = DEFAULT_KI;
+    kD = DEFAULT_KD;
+    minSpeed = DEFAULT_MINSPEED;
+}
+
+bool PIDController::gainsAreAtDefaults()
+{
+    if (kP == DEFAULT_KP && kI == DEFAULT_KI && kD == DEFAULT_KD && minSpeed == DEFAULT_MINSPEED)
+    {
+        return true;
+    }
+    return false;
 }
 
 //Feedback

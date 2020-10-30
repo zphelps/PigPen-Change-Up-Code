@@ -29,15 +29,13 @@ void opcontrol()
 
 		if (driveMode % 2 == 0)
 		{
-			driveOP();
+			drive.driveOP(NORMAL_DRIVE);
 		}
 		else
 		{
-			driveOPSlow();
+			drive.driveOP(SLOW_DRIVE);
 		}
-		//driveOP();
-		//xdriveOP();
-		intakeOP();
-		pros::delay(20);
+		intake.intakeOP();
+		wait(5);
 	}
 }

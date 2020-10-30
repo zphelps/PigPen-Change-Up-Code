@@ -1,124 +1,107 @@
 #include "main.h"
 
+#define RIGHT_SIDE 0;
+#define LEFT_SIDE 1;
+#define BOTH_SIDES 2;
+
 extern pros::Motor frontRight;
 extern pros::Motor backLeft;
 extern pros::Motor frontLeft;
 extern pros::Motor backLeft;
 
-extern pros::Imu inertial;
+extern pros::ADILineSensor rightDriveLine;
+extern pros::ADILineSensor leftDriveLine;
 
-extern double MOVE_KP;
-extern double MOVE_KI;
-extern double MOVE_KD;
-extern double MOVE_ACCEL_STEP;
-extern int MOVE_MIN_SPEED;
-extern int START_SPEED;
+extern int LINE_DETECTED;
 
-extern double TURN_KP;
-extern double TURN_KI;
-extern double TURN_KD;
-extern int POINT_TURN_MIN_SPEED;
+#define MOVE_FOR_DISTANCE 0
+#define MOVE_TO_X_COORD 1
+#define MOVE_BACK_TO_X_COORD 2
+#define MOVE_TO_Y_COORD 3
+#define MOVE_BACK_TO_Y_COORD 4
 
-extern const double WHEEL_DIAMETER;
-extern const int TICS_PER_REVOLUTION;
-extern const double LEFT_OFFSET;
-extern const double RIGHT_OFFSET;
-extern const double REAR_OFFSET;
+#define TURN 0
+#define SWEEP_RIGHT 1
+#define SWEEP_RIGHT_WITH_THRESHHOLD 2
+#define SWEEP_LEFT 3
+#define SWEEP_LEFT_WITH_THRESHHOLD 4
+#define SWEEP_RIGHT_BACK 5
+#define SWEEP_RIGHT_BACK_WITH_THRESHHOLD 6
+#define SWEEP_LEFT_BACK 7
+#define SWEEP_LEFT_BACK_WITH_THRESHHOLD 8
 
-void left(int speed);
-void right(int speed);
+#define NORMAL_DRIVE 0
+#define SLOW_DRIVE 1
 
-void drive(int speed);
+struct MoveTargets
+{
+    int targetDistance;
+    int targetHeading;
+    int accelStep;
+    bool fluid;
+    int moveType;
+};
 
-void brake();
-void coast();
+struct TurnTargets
+{
+    int degrees;
+    int leftSideSpeed;
+    int rightSideSpeed;
+    int errorThreshhold;
+    int turnType;
+};
 
-void timedDrive(int time, int speed);
+extern MoveTargets moveTargets;
+extern TurnTargets turnTargets;
 
-void driveOP();
+class Drive
+{
 
-void driveOPSlow();
+public:
+    static void left(int l);
+    static void right(int r);
+    static void slewRight(int speed, int accelStep);
+    static void slewLeft(int speed, int accelStep);
+    static void slewRightBack(int speed, int accelStep);
+    static void slewLeftBack(int speed, int accelStep);
+    static void drivePower(int l, int r);
+    static void timedDrive(int time, int l, int r);
+    static void untilLineDetected(int speed, int timeout = 2000);
+    static void brake();
+    static void coast();
+    static void driveOP(int driveMode = 0);
 
-void xdriveOP();
+    static void moveStartTask();
+    static void moveStopTask();
 
-void checkInertial(int expectedAngle);
+    static void turnStartTask();
+    static void turnStopTask();
 
-void initializeInertialSensor();
+    Drive &withCorrection(double cM);
+    Drive &withGains(double kP, double kI, double kD, int minSpeed);
+    Drive &withTurnGains(double kP, double kI, double kD, int minSpeed);
 
-void move(int distance, int heading, int accelStep, bool fluid = false);
+    static void moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward);
 
-void move(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
+    Drive &move(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
+    Drive &moveToYCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
+    Drive &moveToXCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
+    Drive &moveBackToYCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
+    Drive &moveBackToXCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
 
-void moveFluid(int distance, int heading, int accelStep);
+    Drive &turn(int degrees);
+    Drive &sweepRight(int degrees, int rightSideSpeed);
+    Drive &sweepRight(int degrees, int rightSideSpeed, int errorThreshhold);
+    Drive &sweepLeft(int degrees, int leftSideSpeed);
+    Drive &sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold);
+    Drive &sweepRightBack(int degrees, int leftSideSpeed);
+    Drive &sweepRightBack(int degrees, int rightSideSpeed, int errorThreshhold);
+    Drive &sweepLeftBack(int degrees, int rightSideSpeed);
+    Drive &sweepLeftBack(int degrees, int leftSideSpeed, int errorThreshhold);
 
-void moveToYCoord(int distance, int heading, int accelStep, bool fluid = false);
+    static void moveTask(void *parameter);
+    static void turnTask(void *parameter);
+    void waitForComplete();
+};
 
-void moveToYCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
-
-void moveToYCoordFluid(int distance, int heading, int accelStep);
-
-void moveToXCoord(int distance, int heading, int accelStep, bool fluid = false);
-
-void moveToXCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
-
-void moveToXCoordFluid(int distance, int heading, int accelStep);
-
-void moveAboslute(double x, double y, int accelStep);
-
-void moveBack(int distance, int heading, int accelStep, bool fluid = false);
-
-void moveBack(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
-
-void moveBackFluid(int distance, int heading, int accelStep);
-
-void moveBackToYCoord(int distance, int heading, int accelStep, bool fluid = false);
-
-void moveBackToYCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
-
-void moveBackToYCoordFluid(int distance, int heading, int accelStep);
-
-void moveBackToXCoord(int distance, int heading, int accelStep, bool fluid = false);
-
-void moveBackToXCoord(int distance, int heading, int accelStep, double kP, int minSpeed, double correction);
-
-void moveBackToXCoordFluid(int distance, int heading, int accelStep);
-
-void turn(int degrees);
-
-void turn(int degrees, int kP, double minSpeed);
-
-void correct(int degrees, int minSpeed);
-
-void turnInertial(int degrees);
-
-void sweepRight(int degrees, int rightSideSpeed);
-
-void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold);
-
-void sweepRight(int degrees, int rightSideSpeed, double kP, int minspeed);
-
-void sweepRight(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed);
-
-void sweepLeft(int degrees, int leftSideSpeed);
-
-void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold);
-
-void sweepLeft(int degrees, int leftSideSpeed, int errorThreshhold, double kP, int minSpeed);
-
-void sweepRightBack(int degrees, int leftSideSpeed);
-
-void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold);
-
-void sweepRightBack(int degrees, int rightSideSpeed, double kP, int minSpeed);
-
-void sweepRightBack(int degrees, int leftSideSpeed, int errorThreshhold, double kP, int minSpeed);
-
-void sweepLeftBack(int degrees, int rightSideSpeed, double kP, int minSpeed);
-
-void sweepLeftBack(int degrees, int rightSideSpeed);
-
-void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold);
-
-void sweepLeftBack(int degrees, int rightSideSpeed, int errorThreshhold, double kP, int minSpeed);
-
-void moveToPoint(int x, int y, int theta);
+extern Drive drive;

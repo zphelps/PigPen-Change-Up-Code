@@ -1,7 +1,5 @@
 #include "main.h"
-
-//Ready for Michigan tournament!
-
+/*
 std::shared_ptr<ChassisController> okapiChassis = ChassisControllerBuilder()
                                                       .withMotors({9, 2}, {5, 1})
                                                       .withGains(
@@ -29,11 +27,6 @@ void test_sTurn()
     profileController->waitUntilSettled();
 }
 
-/**
- * @brief 
- * 
- * @param speed 
- */
 void testMinSpeed(int speed)
 {
     left(speed);
@@ -97,95 +90,197 @@ void twoGoalAutonLeft()
 
     moveBack(14, -180, 0, 0.25, 35, 0.8);
 }
+*/
+void home_row_left_no_cycle()
+{
+    int time = 0;
+    setCoordinates(0, 125, 0);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 25).sweepLeft(-135, 0);
+    drive.withGains(0.2, 0, 0, 35).move(8, -135, 0);
+    drive.timedDrive(300, 30, 30); //300
+    intake.stop();
+    intake.score(ONE_BALL);
+    intake.intake(-127, 0, 0);
+
+    drive.move(-6, -135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepRightBack(-90, 0, 15);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(90, -90, 0); //0.8
+    intake.stop();
+
+    drive.turn(-180);
+    drive.withGains(0.3, 0, 0, 40).move(10, -180, 0); //8
+    drive.timedDrive(100, 30, 30);
+    intake.score(ONE_BALL);
+
+    drive.withGains(0.15, 0, 0, 30).move(-14, -180, 2);
+    drive.turn(-270);
+    drive.move(20, -270, 1, false, true);                        //23
+    drive.withTurnGains(1.6, 0, 0, 80).sweepRight(-225, 30, 20); //1.75
+    intake.intake(127, 127, 0);
+    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(20, -225, 0);
+    drive.timedDrive(500, 40, 40);
+    intake.stop();
+    intake.score(ONE_BALL);
+    intake.intake(-127, -127, 0);
+    drive.move(-24, -225, 1);
+}
+void home_row_left_cycle()
+{
+    int time = 0;
+    setCoordinates(0, 125, 0);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 25).sweepLeft(-135, 0);
+    drive.withGains(0.2, 0, 0, 35).move(8, -135, 0);
+    drive.timedDrive(300, 30, 30); //300
+    intake.stop();
+    intake.score(ONE_BALL);
+    intake.intake(-127, 127, 0);
+
+    drive.move(-6, -135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepRightBack(-90, 0, 15);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(90, -90, 0); //0.8
+    intake.stop();
+
+    drive.turn(-180);
+    drive.withGains(0.3, 0, 0, 40).move(10, -180, 0); //8
+    drive.timedDrive(100, 30, 30);
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL);
+    while (!intakeBallDetected(BLUE_ID))
+    {
+        intake.intake(127, 127, 0);
+    }
+    intake.stop();
+    intake.score(ONE_BALL);
+
+    drive.withGains(0.15, 0, 0, 30).move(-14, -180, 2);
+    drive.turn(-270);
+    drive.move(20, -270, 1, true, true); //23
+    intake.reverseFor(500, true);
+    drive.waitForComplete();
+    drive.withTurnGains(1.6, 0, 0, 80).sweepRight(-225, 30, 20); //1.75
+    intake.intake(127, 127, 0);                                  //
+    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(20, -225, 0);
+    drive.timedDrive(500, 40, 40);
+    drive.drivePower(35, 35);
+    time = 0;
+    while (time < 1500)
+    {
+        intake.intake(127, 127, 0);
+        intake.logic();
+        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE && intakeBallDetected(ANY_COLOR))
+        {
+            break;
+        }
+        wait(1);
+        time++;
+    }
+    intake.stop();
+    intake.score(TWO_BALLS);
+    drive.move(-24, -225, 1);
+}
+void home_row_right_no_cycle()
+{
+    int time = 0;
+    setCoordinates(0, 24, 0);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 25).sweepRight(135, 0);
+    drive.withGains(0.2, 0, 0, 35).move(8, 135, 0);
+    drive.timedDrive(300, 30, 30); //300
+    intake.stop();
+    intake.score(ONE_BALL);
+    intake.intake(-127, 0, 0);
+
+    drive.move(-6, 135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepLeftBack(90, 0, 15);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
+    intake.stop();
+
+    drive.turn(180);
+    drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
+    drive.timedDrive(100, 30, 30);
+    intake.score(ONE_BALL);
+
+    drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
+    drive.turn(270);
+    drive.move(24, 270, 1, false, true);                       //23
+    drive.withTurnGains(1.6, 0, 0, 80).sweepLeft(225, 30, 20); //1.75
+    intake.intake(127, 127, 0);
+    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(10, 225, 0);
+    drive.timedDrive(1000, 40, 40);
+    intake.stop();
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL);
+    intake.intake(-127, -127, 0);
+    drive.move(-24, 225, 1);
+}
 
 void home_row_right_cycle()
 {
+    int time = 0;
     setCoordinates(0, 24, 0);
-    sweepRight(135, 0, 1.5, 25);
-    frontRollers(127);
-    move(8, 135, 0, 0.2, 35, 0.2);
-    timedDrive(300, 35);
-    frontRollers(0);
-    scoreOneBall();
-    intake(90);
-    frontRollers(-127);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 25).sweepRight(135, 0);
+    drive.withGains(0.2, 0, 0, 35).move(8, 135, 0);
+    drive.timedDrive(300, 30, 30); //300
+    intake.stop();
+    //intake.score(ONE_BALL);
 
-    moveBack(8, 135, 0, true); //10
-    fullIntake(127);
-    sweepLeftBack(90, 0, 15, 5, 100);
-    moveBackToYCoord(56, 90, 0, 6, 30, 0.6);
-    //58
+    intake.score(ONE_BALL);
+    intake.intake(0, 127, 0);
 
-    indexer(-127);
-    turn(180);
-    indexer(0);
-    intakeFullStop();
-    frontRollers(127);
-    move(10, 180, 0, 0.3, 40, 0.2); //8
-    timedDrive(500, 35);
-    scoreOneBall(2000);
-    indexer(-127);
-    wait(250);
-    indexer(0);
-    scoreOneBall(3000);
-    intakeFullReverse();
+    drive.move(-6, 135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepLeftBack(90, 0, 15);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
+    intake.stop();
 
-    moveBack(14, 180, 2, 0.15, 30, 0.2);
-    turn(270);
-    move(28, 270, 1, true); //26
-    sweepLeft(225, 30, 20, 1.6, 80);
-    frontRollers(127);
-    move(10, 225, 0, 0.2, 40, 0.5);
-    timedDrive(500, 40);
-    scoreOneBall();
-    wait(200);
-    frontRollers(0);
-    scoreOneBall();
-    intakeFullReverse();
-    moveBack(24, 225, 1);
+    drive.turn(180);
+    drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
+    drive.timedDrive(100, 30, 30);
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL);
+    while (!intakeBallDetected(BLUE_ID))
+    {
+        intake.intake(127, 127, 0);
+    }
+    intake.stop();
+    intake.score(ONE_BALL);
+
+    drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
+    drive.turn(270);
+    intake.intake(127, 127, -127);
+    drive.move(23, 270, 1, false, true);
+    drive.withTurnGains(1.6, 0, 0, 80).sweepLeft(227, 30, 20); //1.75
+    intake.intake(127, 127, 0);
+    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(6, 225, 0);
+    drive.timedDrive(500, 40, 40);
+    drive.drivePower(30, 30);
+    time = 0;
+    while (time < 1000)
+    {
+        intake.intake(127, 127, 0);
+        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE && intakeBallDetected(ANY_COLOR))
+        {
+            break;
+        }
+        wait(1);
+        time++;
+    }
+    intake.stop();
+    if (time >= 1000)
+    {
+        intake.score(ONE_BALL);
+    }
+    else if (time < 1000)
+    {
+        intake.score(TWO_BALLS);
+    }
+    intake.frontRollers(127);
+    drive.timedDrive(250, 40, 40);
+    drive.move(-24, 225, 1);
 }
-
-void home_row_right_no_cycle()
-{
-    setCoordinates(0, 24, 0);
-    sweepRight(135, 0, 1.5, 25);
-    //frontRollers(127);
-    move(8, 135, 0, 0.2, 35, 0.2);
-    timedDrive(300, 30); //300
-    //frontRollers(0);
-    scoreOneBall();
-    // intake(90);
-    // frontRollers(-127);
-
-    moveBack(8, 135, 0, true); //10
-    //fullIntake(127);
-    sweepLeftBack(90, 0, 15, 5, 100);
-    moveBackToYCoord(56, 90, 0, 6, 30, 0.6); //0.8
-    //58
-
-    turn(180);
-    indexer(0);
-    // intakeFullStop();
-    move(10, 180, 0, 0.3, 40, 0.2); //8
-    timedDrive(100, 30);
-    scoreOneBall();
-    //intakeFullReverse();
-
-    moveBack(14, 180, 2, 0.15, 30, 0.2);
-    turn(270);
-    move(26, 270, 1, true);          //23
-    sweepLeft(225, 30, 20, 1.6, 80); //1.75
-    frontRollers(127);
-    move(10, 225, 0, 0.2, 40, 0.5);
-    timedDrive(500, 40);
-    scoreOneBall();
-    wait(200);
-    frontRollers(0);
-    scoreOneBall();
-    intakeFullReverse();
-    moveBack(24, 225, 1);
-}
-
+/*
 void home_row_left_no_cycle()
 {
     setCoordinates(0, 125, 0);
@@ -223,390 +318,261 @@ void home_row_left_no_cycle()
     intakeFullReverse();
     moveBack(24, -225, 1);
 }
-
+*/
 void programming_skills()
 {
+    int time = 0;
     setCoordinates(1, 24, 0);
-    pros::Task intake_manager(intakeManager);
-    move(8, 0, 0, 0.2, 40, 0.8);
-    sweepRight(90, 0, 10, 1.75, 25); //1.35, 35
-    move(16, 90, 0, 0.3, 30, 0.2);
-    timedDrive(300, 30);       //350
-    moveBack(16, 90, 1, true); //15
-    frontRollers(0);
-    sweepRightBack(135, 5, 1.5, 30);
-    move(20, 135, 1, 0.4, 35, 0.2); //0.3
-    intake_manager.set_priority(TASK_PRIORITY_MIN);
-    timedDrive(300, 35);
-    drive(0);
-    scoreOneBallWithVision(2000);
+    intake.intake(127, 127, 0);
+    drive.withGains(0.15, 0, 0, 25).move(12, 0, 2);
+    intake.intake(127, 127, 0);
     wait(100);
-    scoreOneBallWithVision(1000);
-    descoreBottomBall();
+    intake.intake(127, 0, 0);
+    drive.withTurnGains(1.75, 0, 0, 30).sweepRight(90, 0, 5);      //1.35, 35
+    drive.withGains(0.3, 0, 0, 30).move(15, 90, 0);                //0.3
+    drive.timedDrive(300, 30, 30);                                 //350
+    drive.withGains(0.15, 0, 0, 65).move(-16, 90, 1, false, true); //15
 
-    moveBackToYCoord(15, 135, 0, true);
-    frontRollers(-127);
-    sweepRightBack(180, 0, 15, 5, 100);
-    moveBackToXCoord(56, 180, 0, 10, 25, 0.4);
-    // moveBackToYCoord(10, 135, 1, 10, 30, 0.2); //8.5, 15
-
-    // frontRollers(127);
-    // turn(0, 1.25, 20); //1.15 25
-    // intake(90);
-    // moveToXCoord(60, 0, 0, 5, 30, 0.2); //4, 30
-    turn(90);
-    intake_manager.set_priority(TASK_PRIORITY_DEFAULT);
-    //move(6, 90, 0, 0.2, 35, 0.2);
-    move(16, 90, 0, 0.2, 35, 0.2);
-    //intake_manager.suspend();
-    timedDrive(250, 35); //100, 30
-    intake_manager.set_priority(TASK_PRIORITY_MIN);
-    frontRollers(0);
-    scoreOneBall(1000);
+    drive.withTurnGains(1.75, 0, 0, 30).sweepRightBack(135, 5); //1.5
+    intake.stop();
+    drive.withGains(0.275, 0, 0, 30).move(22, 135, 1);
+    intake.intake(0, -75, -127);
     wait(100);
-    scoreOneBallWithVision(2500);
-    descoreBottomBall();
-    moveBack(10, 90, 0);
-    indexer(-127);
-    intake(127);
-    frontRollers(127);
+    intake.stop();
+    intake.frontRollers(127);
+    drive.timedDrive(300, 30, 30);
 
-    //intake_manager.resume();
-    turn(0);
-    intakeFullStop();
-    intake_manager.set_priority(TASK_PRIORITY_DEFAULT);
-    moveToXCoord(78, 0, 0, 10, 45, 0.2); //76, 0, 0,8
-    sweepRight(90, 0, 1.3, 30);          //1.2
-    timedDrive(750, 40);                 //800
-    frontRollers(0);
-    //wait(250);
-    //timedDrive(500, 60);
-    //setTheta(90);
-    //setCoordinates(getX(), -3, getTheta());
-    //wait(100);
-    frontRollers(127);
-    moveBackToYCoord(5, 90, 0);
-    turn(0, 1.4, 25);                //5
-    sweepRight(45, 30, 5, 2.75, 50); //45, 35
-    //intake_manager.suspend();
-    intake_manager.set_priority(TASK_PRIORITY_MIN);
-    frontRollers(0);
-    timedDrive(200, 35); //500
-    scoreOneBallWithVision(1000);
-    descoreBottomBall();
-    sweepLeftBack(0, 0, 5, 5, 100);
-    frontRollers(-127);
-    moveBackToXCoord(89, 0, 0, 10, 25, 0.4); //6, 30, 0.3
+    intake.score(ONE_BALL, 500);
 
-    //intake_manager.resume();
-    intake_manager.set_priority(TASK_PRIORITY_DEFAULT);
-    intake(127);
-    frontRollers(127);
-    turn(-90);
-    intake(0);
-    moveToYCoord(54, -90, 1, 4.5, 30, 0.2); //56
-    turn(0);
-    move(28, 0, 0); //25
-    frontRollers(0);
-    intake_manager.set_priority(TASK_PRIORITY_MIN);
-    //intake_manager.suspend();
-    timedDrive(250, 35); //100
-    scoreOneBall(1000);
-    wait(100);
-    scoreOneBallWithVision(3000);
-    descoreBottomBall();
+    drive.withGains(10, 0, 0, 30).moveBackToYCoord(9, 135, 0); //15
+    intake.intake(-127, 50, 0);
+    wait(200);
+    drive.withTurnGains(1, 0, 0, 20).turn(0); //1
+    intake.intake(127, 0, 0);
+    drive.withGains(4.55, 0, 0, 30).moveToXCoord(60, 0, 0); //4
+
+    drive.withTurnGains(1.25, 0, 0, 20).turn(90);
+    drive.withGains(0.2, 0, 0, 35).move(6, 90, 2);
+    intake.stop();
+    drive.timedDrive(250, 30, 30);
+    intake.brake(INTAKE);
+    //intake.stop();
+
+    //get indexer unstuck
+    intake.indexer(-127, 50);
+    intake.score(TWO_BALLS);
+    setCoordinates(getX(), 2, getTheta());
+    intake.frontRollers(127);
+    drive.timedDrive(250, 40, 40);
+    intake.intake(127, -5, 0);
+    wait(250);
+
+    drive.move(-18, 90, 0); //-18
+    intake.coast(INTAKE);
+    intake.intakeRollers(75);
+    intake.frontRollers(-127, 750);
+    intake.stop();
+
+    drive.withTurnGains(1.3, 0, 0, 20).turn(0);
+    drive.withGains(4, 0, 0, 25).moveToXCoord(108, 0, 0, true);
+    time = 0;
+    while (time < 1000)
+    {
+        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            break;
+        }
+        intake.intake(127, 127, 60);
+    }
+    intake.intake(127, 0, 0);
+    drive.waitForComplete();
+
+    drive.turn(90);
+    intake.stop();
+    drive.withGains(0.175, 0, 0, 35).withCorrection(0.25).move(18, 45, 1); //20
+    drive.timedDrive(500, 45, 45);
+
+    intake.scoreWithVision(1000);
+
+    drive.withGains(8, 0, 0, 30).withCorrection(0.5).moveBackToXCoord(88, 0, 0, true); //0.4, 90
+    time = 0;
+    while (time < 2000)
+    {
+        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            intake.intake(127, 0, 0);
+            break;
+        }
+        intake.intake(127, 127, 75);
+        wait(1);
+        time++;
+    }
+    drive.waitForComplete();
+    drive.withTurnGains(1.25, 0, 0, 20).turn(-90);
+
+    intake.intake(127, 75, 0);
+    drive.moveToYCoord(54, -90, 2); //55
+
+    drive.withTurnGains(1.25, 0, 0, 20).turn(0);
+    intake.stop();
+    drive.move(28, 0, 2);
+    intake.stop();
+    drive.timedDrive(300, 35, 35);
+
+    intake.score(TWO_BALLS, 500);
+    intake.intake(127, 0, 0);
+    drive.timedDrive(250, 40, 40);
     setCoordinates(132, getY(), getTheta());
+    drive.withGains(0.2, 0, 0, 30).move(-6, 0, 2); //8
 
-    frontRollers(-127);
-    moveBack(8, 0, 2);
-    turn(-90);
-    intake(127);
-    frontRollers(127);
-    move(28, -90, 1, true); //24
-    //intake_manager.resume();
-    sweepRight(-45, 0, 15, 2, 75);
-    move(3, -25, 0);
-    //intake_manager.suspend();
-    frontRollers(0);
-    timedDrive(350, 35);
-    scoreOneBall(2000);
+    drive.withTurnGains(1.25, 0, 0, 20).turn(-90);
+    intake.intake(127, 127, -127);
+    drive.withGains(0.25, 0, 0, 75).move(20, -90, 0, false, true); //24
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(2, 0, 0, 75).sweepRight(-45, 0, 15);
+    drive.withGains(0.2, 0, 0, 35).move(8, -45, 0);
+    intake.stop();
+    drive.timedDrive(400, 35, 35);
+
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL, 500);
+    intake.frontRollers(127);
     wait(250);
-    frontRollers(-127);
-    moveBack(26, -45, 2); //26
-    intakeFullStop();
 
-    turn(-90, 2.15, 15); //2, 20
-    //intake_manager.resume();
-    intake(90);
-    frontRollers(127);
-    move(16, -90, 0);
-    timedDrive(300, 35);
-    wait(250);
-    frontRollers(0);
-    timedDrive(250, 75);
-    wait(250);
-    setTheta(-90);
+    drive.withCorrection(0.5).withGains(7, 0, 0, 30).moveBackToYCoord(80, -90, 0, true, false);
+    intake.reverseFor(500, true);
+    drive.waitForComplete();
+    drive.withTurnGains(1.25, 0, 0, 25).turn(-180);
+    intake.intake(127, 127, 0);
+    drive.move(25, -180, 1);
+    drive.untilLineDetected(30, 5000);
+    wait(200);
+    setCoordinates(60, getY(), -180);
+    //drive.withGains(0.25, 0, 0, 25).move(0.5, -180, 0);
 
-    frontRollers(127);
-    moveBack(36, -90, 1); //35
-    turn(-180);
-    move(35, -180, 0); //34
-    turn(-90);
-
-    move(28, -90, 0);
-    //intake_manager.suspend();
-    frontRollers(0);
-    timedDrive(100, 30);
-    scoreOneBall();
-    wait(250);
-    scoreOneBall();
-    moveBack(22, -88, 2, 0.1, 30, 0.6); //0.8
-    frontRollers(127);
-
-    turn(90, 1.35, 15);
-    move(14, 90, 1);
-    left(100);
-    right(100);
-    intake(127);
-    frontRollers(127);
-    wait(1000);
-    scoreOneBallInCenterGoal();
-    indexer(-127);
-    intake(127);
-    frontRollers(127);
-    wait(350);
-
-    frontRollers(-127);
-
-    moveBack(16, 90, 1);
-
-    pros::Task eject(ejectBalls);
-    turn(135, 1.5, 25);
-    move(25, 135, 0, true);
-    sweepRight(180, -5, 1.75, 35);
-    eject.suspend();
-    move(24, 180, 1, 0.2, 30, 0.2); //24
-    frontRollers(127);
-    timedDrive(400, 35);
-    scoreOneBall();
-    frontRollers(0);
-
-    moveBack(5, 180, 2, 0.15, 30, 0.2);
-    frontRollers(127);
-    intake(127);
-    indexer(-127);
-    turn(270);
-    indexer(0);
-    move(32, 270, 1, true); //28
-    sweepLeft(225, 30, 15, 1.75, 80);
-    move(10, 225, 0, 0.2, 40, 0.5);
-    timedDrive(500, 40);
-    scoreOneBall();
-    moveBack(24, 225, 0);
-}
-
-void programming_skills_new()
-{
-    setCoordinates(1, 24, 0);
-    pros::Task intake_manager(intakeManager);
-    move(8, 0, 0, 0.2, 40, 0.8);
-    sweepRight(135, 0, 10, 1.75, 25); //1.35, 35
-    move(15, 90, 0, true);
-    timedDrive(350, 35); //350
-    frontRollers(127);
-    intake_manager.suspend();
-    scoreOneBall(2000);
-    // while (1)
+    // drive.move(-28, -45, 2);
+    // intake.intake(127, 127, -127);
+    // drive.withTurnGains(1.75, 0, 0, 25).turn(-90);
+    // intake.intake(127, 127, 0);
+    // drive.move(18, -90, 0);
+    // drive.timedDrive(350, 30, 30);
+    // intake.stop();
+    // drive.timedDrive(650, 75, 75);
+    // setCoordinates(100, 144, -90);
+    // drive.move(-36, -90, 1, true);
+    // time = 0;
+    // while (time < 1000)
     // {
-    //     pros::vision_object_s_t obj = vision.get_by_size(0);
-    //     if (obj.signature != VISION_OBJECT_ERR_SIG && obj.signature == RED_ID && obj.width > 75)
+    //     if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
     //     {
-    //         frontRollers(0);
     //         break;
     //     }
-    //     frontRollers(127);
+    //     intake.intake(127, 127, 60);
+    //     wait(1);
+    //     time++;
     // }
+    // intake.intake(127, 0, 0);
+    // drive.waitForComplete();
+    // drive.withTurnGains(1.25, 0, 0, 20).turn(-180);
+    // drive.move(32, -180, 0);
 
-    moveBackToYCoord(10, 135, 1, 8.5, MOVE_MIN_SPEED, 0.2); //10
+    drive.withTurnGains(1.25, 0, 0, 20).turn(-90);
+    drive.move(-6, -90, 0, false, true);
+    drive.timedDrive(500, -40, -40);
+    drive.timedDrive(500, 40, 40);
+    drive.timedDrive(1000, -40, -40);
 
-    //intake_manager.resume();
-    frontRollers(127);
-    turn(0, 1.25, 20); //1.15 25
-    intake(90);
-    intake_manager.resume();
-    moveToXCoord(60, 0, 0, 5, 30, 0.2); //4, 30
-    turn(90);
-    frontRollers(0);
-    move(6, 90, 0, 0.2, 35, 0.2);
-    intake_manager.suspend();
-    frontRollers(0);
-    timedDrive(250, 35); //100, 30
-    scoreOneBall(2000);
-    wait(250);
-    scoreOneBall(2000);
-    moveBack(10, 90, 0);
+    intake.frontRollers(127);
+    drive.withGains(0.2, 0, 0, 35).move(38, -92, 1);
+    drive.timedDrive(350, 30, 30);
+    intake.stop();
 
-    intake_manager.resume();
-    frontRollers(127);
-    intake(90);
-    turn(0);
-    moveToXCoord(77, 0, 0, 10, 45, 0.2); //76, 0, 0,8
-    sweepRight(90, 0, 1.3, 35);          //1.2
-    timedDrive(350, 40);                 //800
-    frontRollers(0);
-    wait(250);
-    timedDrive(750, 60);
-    setTheta(90);
-    setCoordinates(getX(), -3, getTheta());
-    wait(100);
-    frontRollers(127);
-    moveBackToYCoord(5, 90, 0);
-    turn(0, 1.4, 25);                //5
-    sweepRight(45, 30, 5, 2.75, 50); //45, 35
-    intake_manager.suspend();
-    frontRollers(0);
-    timedDrive(200, 35); //500
-    scoreOneBall(2000);
-    sweepLeftBack(0, 0, 5, 5, 100);
-    moveBackToXCoord(89, 0, 0, 10, 25, 0.4); //6, 30, 0.3
+    intake.score(ONE_BALL);
+    intake.frontRollers(127);
+    drive.timedDrive(250, 75, 75);
+    intake.intake(127, 0, 0);
 
-    intake_manager.resume();
-    intake(127);
-    frontRollers(127);
-    turn(-90);
-    intake(0);
-    moveToYCoord(54, -90, 1, 4.5, 30, 0.2); //56
-    turn(0);
-    move(28, 0, 0); //25
-    frontRollers(0);
-    intake_manager.suspend();
-    timedDrive(250, 35); //100
-    scoreOneBall(2000);
-    wait(250);
-    scoreOneBall(2000);
-    setCoordinates(132, getY(), getTheta());
+    drive.move(-5, -90, 0, false, true);
+    drive.withCorrection(0.4).move(-32, -50, 0); //-18
+    intake.stop();
+    drive.withTurnGains(1.25, 0, 0, 20).turn(50);
+    drive.move(8, 50, 0, false, true);
+    drive.timedDrive(300, 30, 30);
 
-    frontRollers(-127);
-    moveBack(8, 0, 2);
-    turn(-90);
-    intake(127);
-    frontRollers(127);
-    move(28, -90, 1, true); //24
-    intake_manager.resume();
-    sweepRight(-45, 0, 15, 2, 75);
-    move(3, -25, 0);
-    intake_manager.suspend();
-    frontRollers(0);
-    timedDrive(350, 35);
-    scoreOneBall(2000);
-    wait(250);
-    frontRollers(-127);
-    moveBack(26, -45, 2); //26
-    intakeFullStop();
+    intake.score(ONE_BALL);
 
-    turn(-90, 2.15, 15); //2, 20
-    intake_manager.resume();
-    intake(90);
-    frontRollers(127);
-    move(16, -90, 0);
-    timedDrive(300, 35);
-    wait(250);
-    frontRollers(0);
-    timedDrive(250, 75);
-    wait(250);
-    setTheta(-90);
+    intake.intake(127, 127, -127);
+    drive.withGains(0.2, 0, 0, 25).move(-6, 60, 0);
+    drive.withTurnGains(1.25, 0, 0, 20).turn(125);
+    intake.intake(127, 127, 0);
 
-    frontRollers(127);
-    moveBack(36, -90, 1); //35
-    turn(-180);
-    move(35, -180, 0); //34
-    turn(-90);
+    drive.move(6, 125, 0, false, true);
+    drive.sweepRight(180, -10, 10);
+    drive.move(34, 180, 1);
+    intake.stop();
+    drive.timedDrive(350, 30, 30);
 
-    move(28, -90, 0);
-    intake_manager.suspend();
-    frontRollers(0);
-    timedDrive(100, 30);
-    scoreOneBall();
-    wait(250);
-    scoreOneBall();
-    moveBack(22, -88, 2, 0.1, 30, 0.6); //0.8
-    frontRollers(127);
+    intake.score(ONE_BALL);
+    intake.intake(127, 127, -127);
+    drive.timedDrive(250, 40, 40);
 
-    turn(90, 1.35, 15);
-    move(14, 90, 1);
-    left(100);
-    right(100);
-    intake(127);
-    frontRollers(127);
-    wait(1000);
-    scoreOneBallInCenterGoal();
-    indexer(-127);
-    intake(127);
-    frontRollers(127);
-    wait(350);
+    drive.move(-8, 180, 0);
+    drive.turn(270);
+    intake.intake(127, 127, 0);
+    drive.withGains(0.25, 0, 0, 75).move(22, 270, 0, false, true); //24
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(2, 0, 0, 75).sweepLeft(225, 0, 15);
+    drive.withGains(0.2, 0, 0, 35).move(6, 225, 0);
+    intake.stop();
+    drive.timedDrive(500, 35, 35);
 
-    frontRollers(-127);
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL, 500);
+    drive.drivePower(40, 40);
+    time = 0;
+    while (time < 2000)
+    {
+        if (intakeBallDetected(BLUE_ID))
+        {
+            break;
+        }
+        intake.intake(127, 127, 0);
+    }
 
-    moveBack(16, 90, 1);
-
-    pros::Task eject(ejectBalls);
-    turn(135, 1.5, 25);
-    move(25, 135, 0, true);
-    sweepRight(180, -5, 1.75, 35);
-    eject.suspend();
-    move(24, 180, 1, 0.2, 30, 0.2); //24
-    frontRollers(127);
-    timedDrive(400, 35);
-    scoreOneBall();
-    frontRollers(0);
-
-    moveBack(5, 180, 2, 0.15, 30, 0.2);
-    frontRollers(127);
-    intake(127);
-    indexer(-127);
-    turn(270);
-    indexer(0);
-    move(32, 270, 1, true); //28
-    sweepLeft(225, 30, 15, 1.75, 80);
-    move(10, 225, 0, 0.2, 40, 0.5);
-    timedDrive(500, 40);
-    scoreOneBall();
-    moveBack(24, 225, 0);
+    drive.move(-24, 225, 0);
 }
 
 void autonomous()
 {
-    //pros::Task intake_manager(intakeManager);
-    //.set_priority(TASK_PRIORITY_MIN);
-    // turn(90);
+    // drive.move(24, 0, 0, false, true);
+    // drive.untilLineDetected(30, 5000);
     // wait(250);
-    // turn(180);
-    // wait(250);
-    // turn(270);
-    // wait(250);
-    // turn(360);
-    //scoreOneBall();
-    programming_skills();
+    // setTheta(0);
+    //drive.turn(90);
+    //drive.move(48, 0, 2);
+    //programming_skills();
     //home_row_right_no_cycle();
-    // switch (autonIndex)
-    // {
-    // case 0:
-    //     home_row_right_no_cycle();
-    //     break;
-    // case 1:
-    //     home_row_right_cycle();
-    //     break;
-    // case 2:
-    //     home_row_left_no_cycle();
-    //     break;
-    // case 3:
-    //     //home_row_left_cycle();
-    //     twoGoalAutonRight();
-    //     break;
-    // case 4:
-    //     programming_skills();
-    //     break;
-    // }
+
+    //drive.withTurnGains(1.75, 0, 0, 25).sweepRight(90, 0); //1.35, 35
+    switch (autonIndex)
+    {
+    case 0:
+        home_row_right_no_cycle();
+        break;
+    case 1:
+        home_row_right_cycle();
+        break;
+    case 2:
+        home_row_left_no_cycle();
+        break;
+    case 3:
+        //home_row_left_cycle();
+        home_row_left_cycle();
+        break;
+    case 4:
+        programming_skills();
+        break;
+    }
 
     //intake_manager.remove();
 }
