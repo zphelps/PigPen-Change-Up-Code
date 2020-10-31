@@ -4,12 +4,14 @@ int autonIndex = 0;
 pros::ADIDigitalIn forwardSelectorLimit({21, 'C'});
 pros::ADIDigitalIn backwardSelectorLimit({21, 'D'});
 
-const int autoCount = 5;
+const int autoCount = 7;
 const char *autoNames[autoCount] = {
     "Home Row - Right Side - No Cycle",
     "Home Row - Right Side - Cycle",
     "Home Row - Left Side - No Cycle",
     "Home Row - Left Side - Cycle",
+    "Two Goal - Right",
+    "Two Goal - Left",
     "Programming Skills"};
 
 void autonSelector(void *parameter)

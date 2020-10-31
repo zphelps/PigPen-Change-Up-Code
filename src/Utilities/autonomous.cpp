@@ -1,5 +1,5 @@
 #include "main.h"
-/*
+
 std::shared_ptr<ChassisController> okapiChassis = ChassisControllerBuilder()
                                                       .withMotors({9, 2}, {5, 1})
                                                       .withGains(
@@ -29,68 +29,75 @@ void test_sTurn()
 
 void testMinSpeed(int speed)
 {
-    left(speed);
-    right(speed);
+    drive.drivePower(speed, speed);
     wait(10000);
 }
 
-void twoGoalAutonRight()
+void two_goal_right()
 {
+    int time = 0;
     setCoordinates(0, 24, 0);
-    sweepRight(135, 0, 1.5, 25);
-    frontRollers(127);
-    move(8, 135, 0, 0.2, 35, 0.2);
-    timedDrive(300, 30); //300
-    frontRollers(0);
-    scoreOneBall();
-    intake(90);
-    frontRollers(-127);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 25).sweepRight(135, 0);
+    drive.withGains(0.2, 0, 0, 35).move(8, 135, 0);
+    drive.timedDrive(300, 30, 30); //300
+    intake.stop();
 
-    moveBack(8, 135, 0, true); //10
-    fullIntake(127);
-    sweepLeftBack(90, 0, 15, 5, 100);
-    moveBackToYCoord(56, 90, 0, 6, 30, 0.6); //0.8
-    //58
+    intake.score(ONE_BALL);
+    intake.intake(0, 127, 0);
 
-    indexer(-127);
-    turn(180);
-    indexer(0);
-    intakeFullStop();
-    move(10, 180, 0, 0.3, 40, 0.2); //8
-    timedDrive(100, 30);
-    scoreOneBall();
-    intakeFullReverse();
+    drive.move(-6, 135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepLeftBack(90, 0, 15);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
+    intake.stop();
 
-    moveBack(14, 180, 2, 0.15, 30, 0.2);
+    drive.turn(180);
+    drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
+    drive.timedDrive(100, 30, 30);
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL);
+    while (!intakeBallDetected(BLUE_ID))
+    {
+        intake.intake(127, 127, 0);
+    }
+    intake.stop();
+    intake.score(ONE_BALL);
+
+    drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
 }
 
-void twoGoalAutonLeft()
+void two_goal_left()
 {
+    int time = 0;
     setCoordinates(0, 125, 0);
-    sweepLeft(-135, 0);
-    frontRollers(127);
-    move(8, -135, 0);
-    timedDrive(300, 30);
-    frontRollers(0);
-    scoreOneBall();
-    intake(90);
-    frontRollers(-127);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 25).sweepLeft(-135, 0);
+    drive.withGains(0.2, 0, 0, 35).move(8, -135, 0);
+    drive.timedDrive(300, 30, 30); //300
+    intake.stop();
+    intake.score(ONE_BALL);
+    intake.intake(-127, 127, 0);
 
-    moveBack(10, -135, 0, true);
-    fullIntake(127);
-    sweepRightBack(-90, 0, 20, 5, 100);
-    moveBackToYCoord(90, -90, 0, 6, 30, 0.8);
+    drive.move(-6, -135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepRightBack(-90, 0, 15);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(90, -90, 0); //0.8
+    intake.stop();
 
-    turn(-180);
-    intakeFullStop();
-    move(10, -180, 0, 0.3, 40, 0.2); //8
-    timedDrive(300, 30);
-    scoreOneBall();
-    intakeFullReverse();
+    drive.turn(-180);
+    drive.withGains(0.3, 0, 0, 40).move(10, -180, 0); //8
+    drive.timedDrive(100, 30, 30);
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL);
+    while (!intakeBallDetected(BLUE_ID))
+    {
+        intake.intake(127, 127, 0);
+    }
+    intake.stop();
+    intake.score(ONE_BALL);
 
-    moveBack(14, -180, 0, 0.25, 35, 0.8);
+    drive.withGains(0.15, 0, 0, 30).move(-14, -180, 2);
 }
-*/
+
 void home_row_left_no_cycle()
 {
     int time = 0;
@@ -115,16 +122,18 @@ void home_row_left_no_cycle()
 
     drive.withGains(0.15, 0, 0, 30).move(-14, -180, 2);
     drive.turn(-270);
-    drive.move(20, -270, 1, false, true);                        //23
-    drive.withTurnGains(1.6, 0, 0, 80).sweepRight(-225, 30, 20); //1.75
+    drive.move(21, -270, 1, false, true);                         //23
+    drive.withTurnGains(1.45, 0, 0, 80).sweepRight(-225, 30, 20); //1.75
     intake.intake(127, 127, 0);
     drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(20, -225, 0);
-    drive.timedDrive(500, 40, 40);
+    drive.timedDrive(1000, 40, 40);
+    drive.drivePower(35, 35);
     intake.stop();
     intake.score(ONE_BALL);
     intake.intake(-127, -127, 0);
     drive.move(-24, -225, 1);
 }
+
 void home_row_left_cycle()
 {
     int time = 0;
@@ -156,30 +165,19 @@ void home_row_left_cycle()
 
     drive.withGains(0.15, 0, 0, 30).move(-14, -180, 2);
     drive.turn(-270);
-    drive.move(20, -270, 1, true, true); //23
-    intake.reverseFor(500, true);
-    drive.waitForComplete();
-    drive.withTurnGains(1.6, 0, 0, 80).sweepRight(-225, 30, 20); //1.75
-    intake.intake(127, 127, 0);                                  //
-    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(20, -225, 0);
-    drive.timedDrive(500, 40, 40);
+    intake.intake(127, 127, -127);
+    drive.move(21, -270, 1, false, true);                         //23
+    drive.withTurnGains(1.45, 0, 0, 80).sweepRight(-225, 30, 20); //1.75
+    intake.intake(127, 127, 0);                                   //
+    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(22, -225, 0);
+    drive.timedDrive(750, 40, 40);
     drive.drivePower(35, 35);
-    time = 0;
-    while (time < 1500)
-    {
-        intake.intake(127, 127, 0);
-        intake.logic();
-        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE && intakeBallDetected(ANY_COLOR))
-        {
-            break;
-        }
-        wait(1);
-        time++;
-    }
     intake.stop();
-    intake.score(TWO_BALLS);
+    intake.score(ONE_BALL);
+    intake.frontRollers(-127);
     drive.move(-24, -225, 1);
 }
+
 void home_row_right_no_cycle()
 {
     int time = 0;
@@ -225,7 +223,6 @@ void home_row_right_cycle()
     drive.withGains(0.2, 0, 0, 35).move(8, 135, 0);
     drive.timedDrive(300, 30, 30); //300
     intake.stop();
-    //intake.score(ONE_BALL);
 
     intake.score(ONE_BALL);
     intake.intake(0, 127, 0);
@@ -253,72 +250,15 @@ void home_row_right_cycle()
     drive.move(23, 270, 1, false, true);
     drive.withTurnGains(1.6, 0, 0, 80).sweepLeft(227, 30, 20); //1.75
     intake.intake(127, 127, 0);
-    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(6, 225, 0);
-    drive.timedDrive(500, 40, 40);
-    drive.drivePower(30, 30);
-    time = 0;
-    while (time < 1000)
-    {
-        intake.intake(127, 127, 0);
-        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE && intakeBallDetected(ANY_COLOR))
-        {
-            break;
-        }
-        wait(1);
-        time++;
-    }
+    drive.withCorrection(0.5).withGains(0.2, 0, 0, 40).move(8, 225, 0);
+    drive.timedDrive(750, 40, 40);
+    drive.drivePower(35, 35);
     intake.stop();
-    if (time >= 1000)
-    {
-        intake.score(ONE_BALL);
-    }
-    else if (time < 1000)
-    {
-        intake.score(TWO_BALLS);
-    }
-    intake.frontRollers(127);
-    drive.timedDrive(250, 40, 40);
+    intake.score(ONE_BALL);
+    intake.frontRollers(-127);
     drive.move(-24, 225, 1);
 }
-/*
-void home_row_left_no_cycle()
-{
-    setCoordinates(0, 125, 0);
-    sweepLeft(-135, 0);
-    frontRollers(127);
-    move(8, -135, 0, 0.2, 35, 0.2);
-    frontRollers(0);
-    timedDrive(300, 30);
-    scoreOneBall();
-    intake(90);
-    frontRollers(-127);
 
-    moveBack(8, -135, 0, true);
-    fullIntake(127);
-    sweepRightBack(-90, 0, 20, 5, 100);
-    moveBackToYCoord(90, -90, 0, 6, 30, 0.8);
-
-    turn(-180);
-    intakeFullStop();
-    move(10, -180, 0, 0.3, 40, 0.2); //8
-    timedDrive(300, 30);
-    scoreOneBall();
-    intakeFullReverse();
-
-    moveBack(14, -180, 2, 0.25, 35, 0.8);
-    turn(-270);
-    move(16, -270, 2, true); //18
-    sweepRight(-225, 0, 20, 1.6, 80);
-    frontRollers(127);
-    move(10, -225, 0, 0.2, 40, 0.5);
-    timedDrive(500, 40);
-    scoreOneBall();
-    wait(200);
-    scoreOneBall();
-    intakeFullReverse();
-    moveBack(24, -225, 1);
-}
-*/
 void programming_skills()
 {
     int time = 0;
@@ -544,16 +484,14 @@ void programming_skills()
 
 void autonomous()
 {
-    // drive.move(24, 0, 0, false, true);
-    // drive.untilLineDetected(30, 5000);
-    // wait(250);
-    // setTheta(0);
-    //drive.turn(90);
-    //drive.move(48, 0, 2);
     //programming_skills();
-    //home_row_right_no_cycle();
+    // home_row_right_no_cycle();
+    // home_row_right_cycle();
+    // home_row_left_no_cycle();
+    //home_row_left_cycle();
+    //two_goal_right();
+    // two_goal_left();
 
-    //drive.withTurnGains(1.75, 0, 0, 25).sweepRight(90, 0); //1.35, 35
     switch (autonIndex)
     {
     case 0:
@@ -566,13 +504,16 @@ void autonomous()
         home_row_left_no_cycle();
         break;
     case 3:
-        //home_row_left_cycle();
         home_row_left_cycle();
         break;
     case 4:
+        two_goal_right();
+        break;
+    case 5:
+        two_goal_left();
+        break;
+    case 6:
         programming_skills();
         break;
     }
-
-    //intake_manager.remove();
 }
