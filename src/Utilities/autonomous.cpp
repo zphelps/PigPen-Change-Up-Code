@@ -51,7 +51,7 @@ void two_goal_right()
     drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
     intake.stop();
 
-    drive.turn(180);
+    drive.withTurnGains(1.3, 0, 0, 20).turn(180);
     drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
     drive.timedDrive(100, 30, 30);
     drive.drivePower(30, 30);
@@ -62,6 +62,7 @@ void two_goal_right()
     }
     intake.stop();
     intake.score(ONE_BALL);
+    intake.frontRollers(-127);
 
     drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
 }
@@ -195,13 +196,13 @@ void home_row_right_no_cycle()
     drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
     intake.stop();
 
-    drive.turn(180);
+    drive.withTurnGains(1.3, 0, 0, 20).turn(180);
     drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
     drive.timedDrive(100, 30, 30);
     intake.score(ONE_BALL);
 
     drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
-    drive.turn(270);
+    drive.withTurnGains(1.3, 0, 0, 20).turn(270);
     drive.move(24, 270, 1, false, true);                       //23
     drive.withTurnGains(1.6, 0, 0, 80).sweepLeft(225, 30, 20); //1.75
     intake.intake(127, 127, 0);
@@ -232,7 +233,7 @@ void home_row_right_cycle()
     drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
     intake.stop();
 
-    drive.turn(180);
+    drive.withTurnGains(1.3, 0, 0, 20).turn(180);
     drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
     drive.timedDrive(100, 30, 30);
     drive.drivePower(30, 30);
@@ -245,7 +246,7 @@ void home_row_right_cycle()
     intake.score(ONE_BALL);
 
     drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
-    drive.turn(270);
+    drive.withTurnGains(1.25, 0, 0, 20).turn(270);
     intake.intake(127, 127, -127);
     drive.move(23, 270, 1, false, true);
     drive.withTurnGains(1.6, 0, 0, 80).sweepLeft(227, 30, 20); //1.75
@@ -268,7 +269,7 @@ void programming_skills()
     intake.intake(127, 127, 0);
     wait(100);
     intake.intake(127, 0, 0);
-    drive.withTurnGains(1.75, 0, 0, 30).sweepRight(90, 0, 5);      //1.35, 35
+    drive.withTurnGains(1.8, 0, 0, 30).sweepRight(90, 0, 5);       //1.75, 30
     drive.withGains(0.3, 0, 0, 30).move(15, 90, 0);                //0.3
     drive.timedDrive(300, 30, 30);                                 //350
     drive.withGains(0.15, 0, 0, 65).move(-16, 90, 1, false, true); //15
@@ -287,7 +288,7 @@ void programming_skills()
     drive.withGains(10, 0, 0, 30).moveBackToYCoord(9, 135, 0); //15
     intake.intake(-127, 50, 0);
     wait(200);
-    drive.withTurnGains(1, 0, 0, 20).turn(0); //1
+    drive.withTurnGains(1.15, 0, 0, 20).turn(0); //1, 20
     intake.intake(127, 0, 0);
     drive.withGains(4.55, 0, 0, 30).moveToXCoord(60, 0, 0); //4
 
@@ -351,7 +352,7 @@ void programming_skills()
     drive.withTurnGains(1.25, 0, 0, 20).turn(-90);
 
     intake.intake(127, 75, 0);
-    drive.moveToYCoord(54, -90, 2); //55
+    drive.moveToYCoord(53, -90, 2); //54
 
     drive.withTurnGains(1.25, 0, 0, 20).turn(0);
     intake.stop();
@@ -367,7 +368,7 @@ void programming_skills()
 
     drive.withTurnGains(1.25, 0, 0, 20).turn(-90);
     intake.intake(127, 127, -127);
-    drive.withGains(0.25, 0, 0, 75).move(20, -90, 0, false, true); //24
+    drive.withGains(0.25, 0, 0, 75).move(19, -90, 0, false, true); //20
     intake.intake(127, 127, 0);
     drive.withTurnGains(2, 0, 0, 75).sweepRight(-45, 0, 15);
     drive.withGains(0.2, 0, 0, 35).move(8, -45, 0);
@@ -384,7 +385,7 @@ void programming_skills()
     drive.waitForComplete();
     drive.withTurnGains(1.25, 0, 0, 25).turn(-180);
     intake.intake(127, 127, 0);
-    drive.move(25, -180, 1);
+    drive.move(18, -180, 1); //25
     drive.untilLineDetected(30, 5000);
     wait(200);
     setCoordinates(60, getY(), -180);
@@ -423,7 +424,7 @@ void programming_skills()
     drive.timedDrive(1000, -40, -40);
 
     intake.frontRollers(127);
-    drive.withGains(0.2, 0, 0, 35).move(38, -92, 1);
+    drive.withGains(0.2, 0, 0, 35).move(38, -93, 1); //38, -92
     drive.timedDrive(350, 30, 30);
     intake.stop();
 
@@ -433,24 +434,25 @@ void programming_skills()
     intake.intake(127, 0, 0);
 
     drive.move(-5, -90, 0, false, true);
-    drive.withCorrection(0.4).move(-32, -50, 0); //-18
+    drive.withCorrection(0.15).move(-33, -50, 0); //-32, 0.4
     intake.stop();
-    drive.withTurnGains(1.25, 0, 0, 20).turn(50);
-    drive.move(8, 50, 0, false, true);
-    drive.timedDrive(300, 30, 30);
+    drive.withTurnGains(1.3, 0, 0, 20).turn(50); //1.25, 20
+    drive.move(6, 50, 0, false, true);           //8
+    drive.timedDrive(500, 30, 30);
 
     intake.score(ONE_BALL);
 
-    intake.intake(127, 127, -127);
+    // intake.intake(127, 127, -127);
     drive.withGains(0.2, 0, 0, 25).move(-6, 60, 0);
     drive.withTurnGains(1.25, 0, 0, 20).turn(125);
-    intake.intake(127, 127, 0);
+    intake.intake(127, 127, -127);
 
     drive.move(6, 125, 0, false, true);
-    drive.sweepRight(180, -10, 10);
-    drive.move(34, 180, 1);
+    intake.intake(127, 127, 0);
+    drive.sweepRight(180, -15, 10); //-10
+    drive.move(32, 180, 1);         //34
     intake.stop();
-    drive.timedDrive(350, 30, 30);
+    drive.timedDrive(500, 30, 30);
 
     intake.score(ONE_BALL);
     intake.intake(127, 127, -127);
@@ -459,7 +461,7 @@ void programming_skills()
     drive.move(-8, 180, 0);
     drive.turn(270);
     intake.intake(127, 127, 0);
-    drive.withGains(0.25, 0, 0, 75).move(22, 270, 0, false, true); //24
+    drive.withGains(0.25, 0, 0, 75).move(23, 270, 0, false, true); //24
     intake.intake(127, 127, 0);
     drive.withTurnGains(2, 0, 0, 75).sweepLeft(225, 0, 15);
     drive.withGains(0.2, 0, 0, 35).move(6, 225, 0);
