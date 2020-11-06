@@ -33,6 +33,54 @@ void testMinSpeed(int speed)
     wait(10000);
 }
 
+void two_goal_and_middle_left()
+{
+    long startTime = pros::millis();
+    int time = 0;
+    setCoordinates(0, 128, -90);
+    intake.indexer(127, 500);
+    intake.intake(127, 127, 0);
+    drive.withTurnGains(1.5, 0, 0, 35).sweepLeft(-135, 15, 15);
+    intake.stop();
+    drive.drivePower(10, 40);
+    intake.indexer(-127, 250);
+    intake.score(ONE_BALL);
+
+    drive.move(-6, -135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepRightBack(-90, 0, 15);
+    intake.intake(-127, 0, 0);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(86, -90, 0); //0.8
+    intake.stop();
+
+    drive.withTurnGains(1.25, 0, 0, 20).turn(-180);
+    drive.withGains(0.3, 0, 0, 40).move(8, -180, 0); //8
+    drive.drivePower(30, 30);
+    intake.score(ONE_BALL);
+    while (!intakeBallDetected(BLUE_ID) && time < 2500)
+    {
+        intake.intake(127, 127, 0);
+        wait(1);
+        time++;
+    }
+    intake.stop();
+    //intake.score(ONE_BALL);
+    intake.frontRollers(-127);
+
+    drive.move(-28, -180, 0);
+    drive.withTurnGains(1, 0, 0, 20).turn(0);
+    intake.intake(127, 0, 0);
+    drive.move(4, 0, 0);
+    drive.withTurnGains(2, 0, 0, 35).sweepLeft(-25, 5, 2);
+    intake.stop();
+    drive.timedDrive(500, 100, 10);
+    intake.score(ONE_BALL, 1000);
+    while (pros::millis() - startTime < 14500)
+    {
+        wait(1);
+    }
+    drive.timedDrive(500, -127, -127);
+}
+
 void two_goal_right()
 {
     int time = 0;
@@ -486,6 +534,7 @@ void programming_skills()
 
 void autonomous()
 {
+    two_goal_and_middle_left();
     //programming_skills();
     // home_row_right_no_cycle();
     // home_row_right_cycle();
@@ -494,28 +543,28 @@ void autonomous()
     //two_goal_right();
     // two_goal_left();
 
-    switch (autonIndex)
-    {
-    case 0:
-        home_row_right_no_cycle();
-        break;
-    case 1:
-        home_row_right_cycle();
-        break;
-    case 2:
-        home_row_left_no_cycle();
-        break;
-    case 3:
-        home_row_left_cycle();
-        break;
-    case 4:
-        two_goal_right();
-        break;
-    case 5:
-        two_goal_left();
-        break;
-    case 6:
-        programming_skills();
-        break;
-    }
+    // switch (autonIndex)
+    // {
+    // case 0:
+    //     home_row_right_no_cycle();
+    //     break;
+    // case 1:
+    //     home_row_right_cycle();
+    //     break;
+    // case 2:
+    //     home_row_left_no_cycle();
+    //     break;
+    // case 3:
+    //     home_row_left_cycle();
+    //     break;
+    // case 4:
+    //     two_goal_right();
+    //     break;
+    // case 5:
+    //     two_goal_left();
+    //     break;
+    // case 6:
+    //     programming_skills();
+    //     break;
+    // }
 }
