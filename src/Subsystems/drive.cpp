@@ -32,7 +32,7 @@ bool turnComplete = false;
 
 double correctionMultiplier = 0.2;
 
-int LINE_DETECTED = 600;
+int LINE_DETECTED = 800; //600
 
 //Move task helper methods
 void Drive::moveStartTask()
@@ -1127,7 +1127,7 @@ void Drive::turnTask(void *parameter)
     {
         int time = 0;
 
-        while (time < 50)
+        while (time < 50) //50
         {
             double PIDSpeed = turnPID.getOutput(turnTargets.degrees, getTheta());
             drivePower(PIDSpeed, -PIDSpeed);

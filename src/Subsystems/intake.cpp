@@ -229,7 +229,7 @@ void Intake::logic()
     }
     else
     {
-        intake(127, 127, 50);
+        intake(127, 127, 75);
     }
 }
 
