@@ -13,6 +13,7 @@ pros::ADILineSensor frontRollerLine({21, 'E'});
 pros::ADILineSensor topRollerLine({21, 'B'});
 pros::Vision vision(10);
 pros::Vision vision2(8);
+pros::Vision vision3(4);
 
 pros::vision_signature_s_t BLUE_BALL;
 pros::vision_signature_s_t RED_BALL;
@@ -36,6 +37,38 @@ void initVision()
 }
 
 bool topBallDetected(int color)
+{
+    if (color == BLUE_ID)
+    {
+        pros::vision_object_s_t obj = vision2.get_by_sig(0, BLUE_ID);
+
+        if (obj.signature != VISION_OBJECT_ERR_SIG && obj.width > 100)
+        {
+            return true;
+        }
+    }
+    if (color == RED_ID)
+    {
+        pros::vision_object_s_t obj = vision2.get_by_sig(0, RED_ID);
+
+        if (obj.signature != VISION_OBJECT_ERR_SIG && obj.width > 100)
+        {
+            return true;
+        }
+    }
+    if (color == ANY_COLOR)
+    {
+        pros::vision_object_s_t obj = vision2.get_by_size(0);
+
+        if (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool BallD(int color)
 {
     if (color == BLUE_ID)
     {
@@ -99,6 +132,25 @@ bool intakeBallDetected(int color)
     return false;
 }
 
+bool ballRightOfCenter(int x, int W)
+{
+    pros::vision_object_s_t obj = vision2.get_by_sig(0, BLUE_ID);
+    if (obj.left_coord > (312 - x - W) && obj.width > 50)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool ballLeftOfCenter(int x, int W)
+{
+    pros::vision_object_s_t obj = vision2.get_by_sig(0, BLUE_ID);
+    if (obj.left_coord < (308 - x - W) && obj.width > 50)
+    {
+        return true;
+    }
+    return false;
+}
 //Intake Methods
 void Intake::frontRollers(int speed, int time)
 {

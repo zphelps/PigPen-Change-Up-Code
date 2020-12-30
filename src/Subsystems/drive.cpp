@@ -171,7 +171,10 @@ void Drive::untilLineDetected(int speed, int timeout)
         }
         else if (rightDriveLine.get_value() > LINE_DETECTED && r == true)
         {
-            right(-25);
+            if (speed > 0)
+                right(-25);
+            else
+                right(25);
         }
         else if (rightDriveLine.get_value() < LINE_DETECTED && r == true)
         {
@@ -188,7 +191,10 @@ void Drive::untilLineDetected(int speed, int timeout)
         }
         else if (leftDriveLine.get_value() > LINE_DETECTED && l == true)
         {
-            left(-25);
+            if (speed > 0)
+                left(-25);
+            else
+                left(25);
         }
         else if (leftDriveLine.get_value() < LINE_DETECTED && l == true)
         {
@@ -262,170 +268,289 @@ void Drive::driveOP(int driveMode)
  * @param accelStep 
  * @param backward 
  */
-void Drive::moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward)
+// void Drive::moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward)
+// {
+//     if (backward == false)
+//     {
+//         if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+//         {
+//             if (getTheta() < heading)
+//             {
+//                 slewLeft(PIDSpeed, accelStep);
+//                 slewRight(correctionMultiplier * PIDSpeed, accelStep);
+//             }
+
+//             if (getTheta() > heading)
+//             {
+//                 slewLeft(correctionMultiplier * PIDSpeed, accelStep);
+//                 slewRight(PIDSpeed, accelStep);
+//             }
+
+//             if (getTheta() == heading)
+//             {
+//                 slewLeft(PIDSpeed, accelStep);
+//                 slewRight(PIDSpeed, accelStep);
+//             }
+//         }
+//         else
+//         {
+//             if (getTheta() < heading)
+//             {
+//                 slewLeft(PIDSpeed, accelStep);
+//                 slewRight(PIDSpeed * 0.8, accelStep);
+//             }
+
+//             if (getTheta() > heading)
+//             {
+//                 slewLeft(PIDSpeed * 0.8, accelStep);
+//                 slewRight(PIDSpeed, accelStep);
+//             }
+
+//             if (getTheta() == heading)
+//             {
+//                 slewLeft(PIDSpeed, accelStep);
+//                 slewRight(PIDSpeed, accelStep);
+//             }
+//         }
+//     }
+//     else if (backward)
+//     {
+//         if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+//         {
+//             if (getTheta() < heading)
+//             {
+//                 slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+//                 slewRightBack(PIDSpeed, accelStep);
+//             }
+
+//             if (getTheta() > heading)
+//             {
+//                 slewLeftBack(PIDSpeed, accelStep);
+//                 slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+//             }
+
+//             if (getTheta() == heading)
+//             {
+//                 slewLeftBack(PIDSpeed, accelStep);
+//                 slewRightBack(PIDSpeed, accelStep);
+//             }
+//         }
+//         else
+//         {
+//             if (getTheta() < heading)
+//             {
+//                 slewLeftBack(PIDSpeed * 0.8, accelStep);
+//                 slewRightBack(PIDSpeed, accelStep);
+//             }
+
+//             if (getTheta() > heading)
+//             {
+//                 slewLeftBack(PIDSpeed, accelStep);
+//                 slewRightBack(PIDSpeed * 0.8, accelStep);
+//             }
+
+//             if (getTheta() == heading)
+//             {
+//                 slewLeftBack(PIDSpeed, accelStep);
+//                 slewRightBack(PIDSpeed, accelStep);
+//             }
+//         }
+//     }
+//}
+void Drive::moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward, bool Vision)
 {
-    if (backward == false)
+    if (Vision == true)
     {
-        if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+        pros::vision_object_s_t obj = vision3.get_by_sig(0, BLUE_ID);
+        if (ballRightOfCenter(obj.left_coord, obj.width) == true)
         {
-            if (getTheta() < heading)
-            {
-                slewLeft(PIDSpeed, accelStep);
-                slewRight(correctionMultiplier * PIDSpeed, accelStep);
-            }
-
-            if (getTheta() > heading)
-            {
-                slewLeft(correctionMultiplier * PIDSpeed, accelStep);
-                slewRight(PIDSpeed, accelStep);
-            }
-
-            if (getTheta() == heading)
-            {
-                slewLeft(PIDSpeed, accelStep);
-                slewRight(PIDSpeed, accelStep);
-            }
+            slewLeft(PIDSpeed, accelStep);
+            slewRight(correctionMultiplier * PIDSpeed, accelStep);
+        }
+        else if (ballLeftOfCenter(obj.left_coord, obj.width) == true)
+        {
+            slewLeft(correctionMultiplier * PIDSpeed, accelStep);
+            slewRight(PIDSpeed, accelStep);
         }
         else
         {
-            if (getTheta() < heading)
+            if (backward == false)
             {
-                slewLeft(PIDSpeed, accelStep);
-                slewRight(PIDSpeed * 0.8, accelStep);
-            }
+                if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+                {
+                    if (getTheta() < heading)
+                    {
+                        slewLeft(PIDSpeed, accelStep);
+                        slewRight(correctionMultiplier * PIDSpeed, accelStep);
+                    }
 
-            if (getTheta() > heading)
-            {
-                slewLeft(PIDSpeed * 0.8, accelStep);
-                slewRight(PIDSpeed, accelStep);
-            }
+                    if (getTheta() > heading)
+                    {
+                        slewLeft(correctionMultiplier * PIDSpeed, accelStep);
+                        slewRight(PIDSpeed, accelStep);
+                    }
 
-            if (getTheta() == heading)
+                    if (getTheta() == heading)
+                    {
+                        slewLeft(PIDSpeed, accelStep);
+                        slewRight(PIDSpeed, accelStep);
+                    }
+                }
+                else
+                {
+                    if (getTheta() < heading)
+                    {
+                        slewLeft(PIDSpeed, accelStep);
+                        slewRight(PIDSpeed * 0.8, accelStep);
+                    }
+
+                    if (getTheta() > heading)
+                    {
+                        slewLeft(PIDSpeed * 0.8, accelStep);
+                        slewRight(PIDSpeed, accelStep);
+                    }
+
+                    if (getTheta() == heading)
+                    {
+                        slewLeft(PIDSpeed, accelStep);
+                        slewRight(PIDSpeed, accelStep);
+                    }
+                }
+            }
+            else if (backward)
             {
-                slewLeft(PIDSpeed, accelStep);
-                slewRight(PIDSpeed, accelStep);
+                if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+                {
+                    if (getTheta() < heading)
+                    {
+                        slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                        slewRightBack(PIDSpeed, accelStep);
+                    }
+
+                    if (getTheta() > heading)
+                    {
+                        slewLeftBack(PIDSpeed, accelStep);
+                        slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                    }
+
+                    if (getTheta() == heading)
+                    {
+                        slewLeftBack(PIDSpeed, accelStep);
+                        slewRightBack(PIDSpeed, accelStep);
+                    }
+                }
+                else
+                {
+                    if (getTheta() < heading)
+                    {
+                        slewLeftBack(PIDSpeed * 0.8, accelStep);
+                        slewRightBack(PIDSpeed, accelStep);
+                    }
+
+                    if (getTheta() > heading)
+                    {
+                        slewLeftBack(PIDSpeed, accelStep);
+                        slewRightBack(PIDSpeed * 0.8, accelStep);
+                    }
+
+                    if (getTheta() == heading)
+                    {
+                        slewLeftBack(PIDSpeed, accelStep);
+                        slewRightBack(PIDSpeed, accelStep);
+                    }
+                }
             }
         }
     }
-    else if (backward)
+    else
     {
-        if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
+        if (backward == false)
         {
-            if (getTheta() < heading)
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
             {
-                slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
-                slewRightBack(PIDSpeed, accelStep);
-            }
+                if (getTheta() < heading)
+                {
+                    slewLeft(PIDSpeed, accelStep);
+                    slewRight(correctionMultiplier * PIDSpeed, accelStep);
+                }
 
-            if (getTheta() > heading)
-            {
-                slewLeftBack(PIDSpeed, accelStep);
-                slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
-            }
+                if (getTheta() > heading)
+                {
+                    slewLeft(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRight(PIDSpeed, accelStep);
+                }
 
-            if (getTheta() == heading)
+                if (getTheta() == heading)
+                {
+                    slewLeft(PIDSpeed, accelStep);
+                    slewRight(PIDSpeed, accelStep);
+                }
+            }
+            else
             {
-                slewLeftBack(PIDSpeed, accelStep);
-                slewRightBack(PIDSpeed, accelStep);
+                if (getTheta() < heading)
+                {
+                    slewLeft(PIDSpeed, accelStep);
+                    slewRight(PIDSpeed * 0.8, accelStep);
+                }
+
+                if (getTheta() > heading)
+                {
+                    slewLeft(PIDSpeed * 0.8, accelStep);
+                    slewRight(PIDSpeed, accelStep);
+                }
+
+                if (getTheta() == heading)
+                {
+                    slewLeft(PIDSpeed, accelStep);
+                    slewRight(PIDSpeed, accelStep);
+                }
             }
         }
-        else
+        else if (backward)
         {
-            if (getTheta() < heading)
+            if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
             {
-                slewLeftBack(PIDSpeed * 0.8, accelStep);
-                slewRightBack(PIDSpeed, accelStep);
-            }
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(correctionMultiplier * PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
 
-            if (getTheta() > heading)
-            {
-                slewLeftBack(PIDSpeed, accelStep);
-                slewRightBack(PIDSpeed * 0.8, accelStep);
-            }
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(correctionMultiplier * PIDSpeed, accelStep);
+                }
 
-            if (getTheta() == heading)
-            {
-                slewLeftBack(PIDSpeed, accelStep);
-                slewRightBack(PIDSpeed, accelStep);
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
             }
-        }
-    }
-    /*
-    if (!backward)
-    {
-        if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
-        {
-            if (getTheta() < heading)
+            else
             {
-                drivePower(slewLeft(PIDSpeed, accelStep), slewRight(correctionMultiplier * PIDSpeed, accelStep));
-            }
+                if (getTheta() < heading)
+                {
+                    slewLeftBack(PIDSpeed * 0.8, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
 
-            if (getTheta() > heading)
-            {
-                drivePower(slewLeft(correctionMultiplier * PIDSpeed, accelStep), slewRight(PIDSpeed, accelStep));
-            }
+                if (getTheta() > heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed * 0.8, accelStep);
+                }
 
-            if (getTheta() == heading)
-            {
-                drivePower(slewLeft(PIDSpeed, accelStep), slewRight(PIDSpeed, accelStep));
-            }
-        }
-        else
-        {
-            if (getTheta() < heading)
-            {
-                drivePower(slewLeft(PIDSpeed, accelStep), slewRight(PIDSpeed * 0.8, accelStep));
-            }
-
-            if (getTheta() > heading)
-            {
-                drivePower(slewLeft(PIDSpeed * 0.8, accelStep), slewRight(PIDSpeed, accelStep));
-            }
-
-            if (getTheta() == heading)
-            {
-                drivePower(slewLeft(PIDSpeed, accelStep), slewRight(PIDSpeed, accelStep));
-            }
-        }
-    }
-    else if (backward)
-    {
-        if ((heading - getTheta() >= 5 || heading - getTheta() <= -5))
-        {
-            if (getTheta() < heading)
-            {
-                drivePower(slewLeftBack(correctionMultiplier * PIDSpeed, accelStep), slewRightBack(PIDSpeed, accelStep));
-            }
-
-            if (getTheta() > heading)
-            {
-                drivePower(slewLeftBack(PIDSpeed, accelStep), slewRightBack(correctionMultiplier * PIDSpeed, accelStep));
-            }
-
-            if (getTheta() == heading)
-            {
-                drivePower(slewLeftBack(PIDSpeed, accelStep), slewRightBack(PIDSpeed, accelStep));
-            }
-        }
-        else
-        {
-            if (getTheta() < heading)
-            {
-                drivePower(slewLeftBack(PIDSpeed * 0.8, accelStep), slewRightBack(PIDSpeed, accelStep));
-            }
-
-            if (getTheta() > heading)
-            {
-                drivePower(slewLeftBack(PIDSpeed, accelStep), slewRightBack(PIDSpeed * 0.8, accelStep));
-            }
-
-            if (getTheta() == heading)
-            {
-                drivePower(slewLeftBack(PIDSpeed, accelStep), slewRightBack(PIDSpeed, accelStep));
+                if (getTheta() == heading)
+                {
+                    slewLeftBack(PIDSpeed, accelStep);
+                    slewRightBack(PIDSpeed, accelStep);
+                }
             }
         }
     }
-    */
 }
 
 /**
@@ -673,7 +798,7 @@ void Drive::moveTask(void *parameter)
                 double PIDSpeed = (movePID.getOutput(target, L.get_value()));
                 driveError = moveTargets.targetDistance - ((L.get_value() / TICS_PER_REVOLUTION) * (WHEEL_DIAMETER * PI));
                 //Move straight at heading
-                moveHeadingCorrection(moveTargets.targetHeading, correctionMultiplier, PIDSpeed, moveTargets.accelStep, true);
+                moveHeadingCorrection(moveTargets.targetHeading, correctionMultiplier, PIDSpeed, moveTargets.accelStep, true, true);
             }
         }
         else
@@ -683,7 +808,7 @@ void Drive::moveTask(void *parameter)
             {
                 double PIDSpeed = movePID.getOutput(target, L.get_value());
                 driveError = moveTargets.targetDistance - ((L.get_value() / TICS_PER_REVOLUTION) * (WHEEL_DIAMETER * PI));
-                moveHeadingCorrection(moveTargets.targetHeading, correctionMultiplier, PIDSpeed, moveTargets.accelStep, false);
+                moveHeadingCorrection(moveTargets.targetHeading, correctionMultiplier, PIDSpeed, moveTargets.accelStep, false, true);
             }
         }
 

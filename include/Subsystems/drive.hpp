@@ -95,7 +95,8 @@ public:
     Drive &withGains(double kP, double kI, double kD, int minSpeed);
     Drive &withTurnGains(double kP, double kI, double kD, int minSpeed);
 
-    static void moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward);
+    //static void moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward);
+    static void moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward, bool vision = false);
 
     Drive &move(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
     Drive &moveToYCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);

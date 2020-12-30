@@ -10,6 +10,7 @@ extern pros::ADILineSensor topRollerLine;
 #define RED_ID 2
 #define ANY_COLOR 3
 
+extern pros::Vision vision3;
 extern pros::Vision vision2;
 extern pros::Vision vision;
 
@@ -27,6 +28,8 @@ void initVision();
 bool topBallDetected(int color);
 bool intakeBallDetected(int color);
 
+bool ballRightOfCenter(int x, int W);
+bool ballLeftOfCenter(int x, int W);
 void visionTest();
 
 extern int BALL_DETECTED_SIGNATURE;

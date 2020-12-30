@@ -352,8 +352,13 @@ void programming_skills()
     wait(300);                                   //200
     drive.withTurnGains(1.15, 0, 0, 20).turn(0); //1, 20
     intake.intake(127, 0, 0);
-    drive.withGains(4, 0, 0, 30).moveToXCoord(60, 0, 0); //4.55
+    drive.withGains(4, 0, 0, 30).moveToXCoord(65, 0, 0); //4.55
 
+    wait(250);
+    drive.untilLineDetected(-35, 5000); //30
+    wait(150);
+    intake.intake(127, 0, 0);
+    wait(50);
     drive.withTurnGains(1.45, 0, 0, 22).turn(90); //1.35 , 20
     drive.withGains(0.2, 0, 0, 35).move(6, 90, 2);
     intake.stop();
@@ -433,7 +438,7 @@ void programming_skills()
 
     drive.withTurnGains(1.35, 0, 0, 20).turn(-90); //1.25
     intake.intake(127, 127, -127);
-    drive.withGains(0.25, 0, 0, 75).move(18, -90, 0, false, true); //19
+    drive.withGains(0.25, 0, 0, 75).move(20, -90, 0, false, true); //18
     intake.intake(127, 127, 0);
     drive.withTurnGains(2, 0, 0, 75).sweepRight(-45, 0, 15);
     drive.withGains(0.2, 0, 0, 35).move(8, -45, 0);
@@ -445,14 +450,17 @@ void programming_skills()
     intake.frontRollers(127);
     wait(250);
 
-    drive.withCorrection(0.5).withGains(7, 0, 0, 30).moveBackToYCoord(78, -90, 0); //80
+    drive.withCorrection(0.5).withGains(7, 0, 0, 30).moveBackToYCoord(82, -90, 0); //80
     intake.intake(127, 127, -127);
     drive.withTurnGains(1.35, 0, 0, 25).turn(-180); //1.25
-    drive.move(25, -180, 1);                        //23
-    intake.intake(127, 127, 0);
-    drive.untilLineDetected(35, 5000); //30
+    intake.intake(127, 0, 0);
+    drive.move(40, -180, 0); //23
+    wait(100);
+    wait(250);
+    drive.untilLineDetected(-35, 5000); //30
     //wait(200);
     setCoordinates(60, getY(), -180);
+    wait(100);
     intake.intake(127, 0, 0);
     //drive.withGains(0.25, 0, 0, 25).move(0.5, -180, 0);
 
@@ -482,6 +490,7 @@ void programming_skills()
     // drive.withTurnGains(1.25, 0, 0, 20).turn(-180);
     // drive.move(32, -180, 0);
 
+    drive.move(-2, -180, 0);
     drive.withTurnGains(1.25, 0, 0, 20).turn(-90);
     drive.move(-6, -90, 0, false, true);
     drive.timedDrive(500, -40, -40);
@@ -541,7 +550,7 @@ void programming_skills()
     drive.timedDrive(100, 55, 5);
     //setTheta(180);
 
-    drive.move(-10, 180, 0); //-8
+    drive.move(-8, 180, 0); //-10
     drive.withTurnGains(1.35, 0, 0, 20).turn(270);
     //intake.intake(127, 127, 0);
     drive.withGains(0.25, 0, 0, 75).move(25, 270, 0, false, true); //23
@@ -573,6 +582,27 @@ void autonomous()
 {
     //two_goal_and_middle_left();
     //programming_skills();
+    int time = 0;
+    while (time < 10000)
+    {
+        drive.drivePower(50, 50);
+        pros::vision_object_s_t obj = vision2.get_by_sig(0, BLUE_ID);
+        if (ballRightOfCenter(obj.left_coord, obj.width) == true)
+        {
+            drive.left(35);
+        }
+        else if (ballLeftOfCenter(obj.left_coord, obj.width) == true)
+        {
+            drive.right(35);
+        }
+        else
+        {
+            //drive.drivePower(0, 0);
+        }
+        time++;
+    }
+    // intake.intake(127, 0, 0);
+    //drive.move(48, 0, 0);
     //home_row_right_no_cycle();
     // home_row_right_cycle();
     // home_row_left_no_cycle();
@@ -580,29 +610,29 @@ void autonomous()
     //two_goal_right();
     // two_goal_left();
 
-    switch (autonIndex)
-    {
-    case 0:
-        home_row_right_no_cycle();
-        break;
-    case 1:
-        home_row_right_cycle();
-        break;
-    case 2:
-        home_row_left_no_cycle();
-        break;
-    case 3:
-        home_row_left_cycle();
-        break;
-    case 4:
-        two_goal_right();
-        break;
-    case 5:
-        two_goal_left();
-        break;
-    case 6:
-        programming_skills();
-        //two_goal_and_middle_left();
-        break;
-    }
+    // switch (autonIndex)
+    // {
+    // case 0:
+    //     home_row_right_no_cycle();
+    //     break;
+    // case 1:
+    //     home_row_right_cycle();
+    //     break;
+    // case 2:
+    //     home_row_left_no_cycle();
+    //     break;
+    // case 3:
+    //     home_row_left_cycle();
+    //     break;
+    // case 4:
+    //     two_goal_right();
+    //     break;
+    // case 5:
+    //     two_goal_left();
+    //     break;
+    // case 6:
+    //     programming_skills();
+    //     //two_goal_and_middle_left();
+    //     break;
+    //}
 }
