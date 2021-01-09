@@ -9,6 +9,7 @@ extern pros::ADILineSensor topRollerLine;
 #define BLUE_ID 1
 #define RED_ID 2
 #define ANY_COLOR 3
+#define BLUE_ID_ON_GROUND 4
 
 extern pros::Vision vision3;
 extern pros::Vision vision2;
@@ -24,6 +25,10 @@ extern pros::Vision vision;
 
 //Visions Functions
 void initVision();
+
+double driverBaseAngle(int inColor);
+void monitorVisionTask(void *);
+pros::vision_object_s_t calculateVision(int inColor);
 
 bool topBallDetected(int color);
 bool intakeBallDetected(int color);
@@ -42,6 +47,7 @@ class Intake
 {
 public:
     void frontRollers(int speed, int time = 0);
+    void frontRollersSeparate(int l, int r);
     void intakeRollers(int speed, int time = 0);
     void indexer(int speed, int time = 0);
     void intake(int FRSpeed, int IRSpeed, int ISpeed);
@@ -59,7 +65,7 @@ public:
     void intakeOP();
 
     void score(int numBalls, int timeout = 2000);
-    void scoreWithVision(int timeout = 2000);
+    void scoreWithVision(int timeout = 2000, int colorID = ANY_COLOR);
 
     void twoBlueCycleThreeRed();
     void twoBlueCycleTwoRed();

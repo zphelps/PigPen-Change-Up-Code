@@ -9,9 +9,9 @@ const char *autoNames[autoCount] = {
     "Home Row - Right Side - No Cycle",
     "Home Row - Right Side - Cycle",
     "Home Row - Left Side - No Cycle",
-    "Home Row - Left Side - Cycle",
+    "Home Row - Left Side - Center",
     "Two Goal - Right",
-    "Two Goal - Left",
+    "Two Goal - Left - Center",
     "Programming Skills"};
 
 void autonSelector(void *parameter)
@@ -51,6 +51,7 @@ void initialize()
 
     //Initialize Vision Sensor
     initVision();
+    pros::Task driverMonitorVisionTask(monitorVisionTask, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "VisionPolling");
 
     //Auton Selector Init
     pros::Task lcd_task(autonSelector);

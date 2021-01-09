@@ -118,7 +118,7 @@ void calculate_position(void *parameter)
         pros::lcd::print(3, "Y: %f", yglobal);
 
         pros::lcd::print(4, "R: %d", R.get_value());
-        pros::lcd::print(5, "L: %d", L.get_value());
+        //pros::lcd::print(5, "L: %d", L.get_value());
         // pros::lcd::print(6, "S: %d", S.get_value());
     }
 }

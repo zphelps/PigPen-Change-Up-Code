@@ -13,9 +13,10 @@ pros::ADILineSensor frontRollerLine({21, 'E'});
 pros::ADILineSensor topRollerLine({21, 'B'});
 pros::Vision vision(10);
 pros::Vision vision2(8);
-pros::Vision vision3(4);
+pros::Vision vision3(7);
 
 pros::vision_signature_s_t BLUE_BALL;
+pros::vision_signature_s_t BLUE_BALL_ON_GROUND;
 pros::vision_signature_s_t RED_BALL;
 
 int BALL_DETECTED_SIGNATURE = 2500;
@@ -26,6 +27,7 @@ Intake intake;
 void initVision()
 {
     BLUE_BALL = pros::Vision::signature_from_utility(BLUE_ID, -3461, -2325, -2893, 8235, 11659, 9947, 3.200, 0);
+    BLUE_BALL_ON_GROUND = pros::Vision::signature_from_utility(BLUE_ID_ON_GROUND, -3429, -1499, -2464, 5869, 10615, 8242, 2.800, 0);
 
     RED_BALL = pros::Vision::signature_from_utility(RED_ID, 6495, 8301, 7398, -311, 403, 46, 5.000, 0);
 
@@ -34,6 +36,56 @@ void initVision()
 
     vision2.set_signature(BLUE_ID, &BLUE_BALL);
     vision2.set_signature(RED_ID, &RED_BALL);
+
+    vision3.set_signature(BLUE_ID_ON_GROUND, &BLUE_BALL_ON_GROUND);
+    vision3.set_signature(BLUE_ID, &BLUE_BALL);
+    vision3.set_signature(RED_ID, &RED_BALL);
+}
+
+pros::vision_object_s_t visionScannerData;
+bool updateVision;
+int color;
+
+pros::vision_object_s_t calculateVision(int inColor) //Function to read vision sensor data
+{
+    color = inColor;
+    updateVision = true;
+    return visionScannerData;
+}
+
+void monitorVisionTask(void *)
+{
+    while (true)
+    {
+        //pros::Vision mainVision(6);
+        if (updateVision)
+        {
+            visionScannerData = vision3.get_by_sig(0, color); // Returns info for largest object of the signature
+            updateVision = false;
+        }
+        wait(10);
+    }
+}
+
+#define BASE_P 0.9 // The Kp for X error / base power 0.85
+
+double driverBaseAngle(int inColor) //Function that outputs the power to be sent to the base for turning
+{
+    int x_error = calculateVision(inColor).x_middle_coord - VISION_FOV_WIDTH / 2;
+    // Centers the vision, and any x deriviation is our error
+    // If the vision sensor is not centered with the arm, a trig formula needs to be here.
+    // It will then output absolute, or most likely relative angle error. P will have to be changed
+
+    float finalBasePower;
+    if (calculateVision(inColor).signature == 255)
+    {
+        finalBasePower = 0;
+    }
+    else
+    {
+        finalBasePower = x_error * BASE_P; // For now a simple P based on X deriviation from the center of the vision
+    }
+    return finalBasePower; //Returns power to be sent to the base
 }
 
 bool topBallDetected(int color)
@@ -183,6 +235,12 @@ void Intake::intakeRollers(int speed, int time)
     }
 }
 
+void Intake::frontRollersSeparate(int l, int r)
+{
+    rightRollerMotor.move(r);
+    leftRollerMotor.move(l);
+}
+
 void Intake::indexer(int speed, int time)
 {
     if (time > 0)
@@ -267,18 +325,34 @@ void Intake::logic()
 {
     pros::vision_object_s_t obj = vision.get_by_size(0);
 
-    if ((intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE) && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100) && frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+    // if ((intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE) && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && obj.width > 100))
+    // {
+    //     intake(0, 0, 0);
+    // }
+    if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && (obj.width > 100)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
     {
-        intake(0, 0, 0);
+        intake(0, 0, -50);
     }
-    else if (intakeLimit.get_value() == 1 && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+    else if (intakeLimit.get_value() == 1 && (obj.signature != VISION_OBJECT_ERR_SIG && (obj.signature == BLUE_ID || obj.signature == RED_ID) && (obj.width > 100)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
     {
-        intake(127, 75, 30);
+        intake(127, 127, -20);
     }
-    else if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+    else if ((topRollerLine.get_value() < BALL_DETECTED_SIGNATURE))
     {
         intake(127, 0, 0);
     }
+    else if (intakeLimit.get_value() == 1)
+    {
+        intake(127, 0, 0);
+    }
+    else if (intakeLimit.get_value() == 1 && (obj.signature == VISION_OBJECT_ERR_SIG || (obj.signature == BLUE_ID || obj.signature == RED_ID && obj.width < 100)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+    {
+        intake(127, 75, 30);
+    }
+    // else if ((obj.signature == VISION_OBJECT_ERR_SIG || (obj.signature == BLUE_ID || obj.signature == RED_ID && obj.width < 100)) && !topRollerLine.get_value() < BALL_DETECTED_SIGNATURE && !frontRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+    // {
+    //     intake(127, 75, 0);
+    // }
     else
     {
         intake(127, 127, 75);
@@ -384,6 +458,17 @@ void Intake::score(int numBalls, int timeout)
             {
                 indexer(127);
                 intakeRollers(127);
+                if (numBalls >= 2)
+                {
+                    if (i == 1)
+                    {
+                        frontRollers(127);
+                    }
+                    else
+                    {
+                        frontRollers(0);
+                    }
+                }
                 wait(1);
                 time++;
             }
@@ -391,7 +476,7 @@ void Intake::score(int numBalls, int timeout)
         intakeRollers(0);
         wait(200); //200
         indexer(0);
-        wait(200);
+        wait(0); //200
     }
 }
 
@@ -400,11 +485,11 @@ void Intake::score(int numBalls, int timeout)
  * 
  * @param timeout 
  */
-void Intake::scoreWithVision(int timeout)
+void Intake::scoreWithVision(int timeout, int colorID)
 {
     score(ONE_BALL);
     int time = 0;
-    while (!topBallDetected(ANY_COLOR) && time < timeout)
+    while (!topBallDetected(colorID) && time < timeout)
     {
         wait(1);
         time++;
@@ -413,7 +498,32 @@ void Intake::scoreWithVision(int timeout)
 
 void Intake::intakeOP()
 {
-    if (master.get_digital(DIGITAL_R1) || partner.get_digital(DIGITAL_L2))
+    if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1))
+    {
+        coast(INDEXER);
+        frontRollers(127);
+        intakeRollers(127);
+        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+        {
+            indexer(127);
+        }
+        else if (indexerLimit.get_value() == 1)
+        {
+            intakeRollers(0);
+            wait(100); //200
+            indexer(0);
+            // if (intakeLimit.get_value() == 1)
+            // {
+            //     wait(50);
+            // }
+        }
+        else
+        {
+            intakeRollers(127);
+            indexer(127);
+        }
+    }
+    else if (master.get_digital(DIGITAL_R1) || partner.get_digital(DIGITAL_L2))
     {
         indexerMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
@@ -425,7 +535,7 @@ void Intake::intakeOP()
     }
     else if (master.get_digital(DIGITAL_L2))
     {
-        reverseFor(750);
+        reverseFor(1000); //750
     }
     else if (master.get_digital(DIGITAL_UP))
     {
@@ -445,9 +555,13 @@ void Intake::intakeOP()
         else if (indexerLimit.get_value() == 1)
         {
             intakeRollers(0);
-            wait(200);
+            wait(150); //200
             indexer(0);
-            wait(50);
+            wait(25);
+            // if (intakeLimit.get_value() == 1)
+            // {
+            //     wait(50);
+            // }
         }
         else
         {

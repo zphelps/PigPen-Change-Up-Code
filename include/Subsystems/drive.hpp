@@ -8,6 +8,7 @@ extern pros::Motor backLeft;
 //Line Sensors
 extern pros::ADILineSensor rightDriveLine;
 extern pros::ADILineSensor leftDriveLine;
+extern pros::ADILineSensor crossTapeLine;
 
 //Externalize line sensor constant
 extern int LINE_DETECTED;
@@ -17,10 +18,13 @@ extern int LINE_DETECTED;
 #define BOTH_SIDES 2;
 
 #define MOVE_FOR_DISTANCE 0
+#define MOVE_WITH_VISION 5
 #define MOVE_TO_X_COORD 1
 #define MOVE_BACK_TO_X_COORD 2
 #define MOVE_TO_Y_COORD 3
 #define MOVE_BACK_TO_Y_COORD 4
+#define MOVE_WITH_VISION_TO_X_COORD 6
+#define MOVE_WITH_VISION_TO_Y_COORD 7
 
 #define TURN 0
 #define SWEEP_RIGHT 1
@@ -46,6 +50,7 @@ struct MoveTargets
     int accelStep;
     bool fluid;
     int moveType;
+    int color = 2;
 };
 
 /**
@@ -82,6 +87,8 @@ public:
     static void timedDrive(int time, int l, int r);
     static void untilLineDetected(int speed, int timeout = 2000);
     static void brake();
+    static void brakeRightSide();
+    static void brakeLeftSide();
     static void coast();
     static void driveOP(int driveMode = 0);
 
@@ -99,6 +106,10 @@ public:
     static void moveHeadingCorrection(int heading, double correctionMultiplier, double PIDSpeed, int accelStep, bool backward, bool vision = false);
 
     Drive &move(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
+    Drive &moveWithVision(int distance, int heading, int accelStep, int color = 2, bool async = false, bool fluid = false);
+    Drive &moveWithVisionToXCoord(int distance, int heading, int accelStep, int color = 2, bool async = false, bool fluid = false);
+    Drive &moveWithVisionToYCoord(int distance, int heading, int accelStep, int color = 2, bool async = false, bool fluid = false);
+
     Drive &moveToYCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
     Drive &moveToXCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
     Drive &moveBackToYCoord(int distance, int heading, int accelStep, bool async = false, bool fluid = false);
