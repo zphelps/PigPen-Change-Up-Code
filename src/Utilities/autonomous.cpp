@@ -254,13 +254,16 @@ void two_goal_and_middle_left()
     intake.intake(127, 127, 0);
     drive.withTurnGains(1.5, 0, 0, 35).sweepLeft(-135, 15, 15);
     intake.stop();
-    drive.drivePower(10, 40);
+    drive.drivePower(15, 40);
     intake.indexer(-127, 250);
+    wait(100);
+    intake.stop();
     intake.score(ONE_BALL, 2000);
+    wait(200);
 
     drive.move(-6, -135, 0, false, true); //10
     drive.withTurnGains(5, 0, 0, 100).sweepRightBack(-90, 0, 15);
-    intake.intake(-127, 0, 0);
+    intake.intake(127, 0, 0);
     drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(83, -90, 0); //0.8, 88
     intake.stop();
 
@@ -279,14 +282,15 @@ void two_goal_and_middle_left()
     intake.frontRollers(-127);
 
     drive.withGains(8, 0, 0, 30).moveBackToXCoord(34, -225, 0);
-    drive.withTurnGains(1.35, 0, 0, 25).turn(-315);
+    drive.withTurnGains(1.35, 0, 0, 30).turn(-315);
     //intake.intake(127, 0, 0);
-    drive.withGains(0.2, 0, 0, 40).move(10, -310, 0, false, true);
+    drive.withGains(0.2, 0, 0, 40).move(9, -315, 0, false, true);
     //drive.withTurnGains(2, 0, 0, 35).sweepLeft(-25, 5, 2);
-    drive.timedDrive(700, 40, 40);
+    drive.timedDrive(1000, 40, 55);
     intake.intake(-127, -50, -50);
     wait(100);
     intake.stop();
+    drive.drivePower(35, 35);
     intake.score(ONE_BALL, 2000);
     while (pros::millis() - startTime < 14500)
     {
@@ -499,16 +503,16 @@ void home_row_right_no_cycle()
 
     drive.move(-6, 135, 0, false, true); //10
     drive.withTurnGains(5, 0, 0, 100).sweepLeftBack(90, 0, 15);
-    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(57, 90, 0); //0.8 56
     intake.stop();
 
-    drive.withTurnGains(1.3, 0, 0, 20).turn(180);
+    drive.withTurnGains(1.35, 0, 0, 30).turn(180);
     drive.withGains(0.3, 0, 0, 40).moveWithVision(10, 180, 0); //8
     drive.timedDrive(100, 30, 30);
     intake.score(ONE_BALL);
 
-    drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
-    drive.withTurnGains(1.3, 0, 0, 20).turn(270);
+    drive.withGains(0.15, 0, 0, 30).move(-14, 180, 0);
+    drive.withTurnGains(1.35, 0, 0, 30).turn(270);
     drive.move(26, 270, 1, false, true);                       //25
     drive.withTurnGains(1.6, 0, 0, 80).sweepLeft(225, 30, 20); //1.75
     intake.intake(127, 127, 0);
@@ -997,7 +1001,7 @@ void programming_skills()
     drive.untilLineDetected(30); //30
     setCoordinates(120, getY(), 0);
     intake.intake(127, 0, 0);
-    drive.withTurnGains(1.25, 0, 0, 20).turn(90);
+    drive.withTurnGains(1.3, 0, 0, 30).turn(90);
     drive.withGains(0.175, 0, 0, 40).withCorrection(0.35).move(18, 50, 1); //0.25
     drive.timedDrive(300, 50, 50);
     // drive.withTurnGains(1.25, 0, 0, 20).turn(110);
@@ -1016,7 +1020,7 @@ void programming_skills()
     intake.scoreWithVision(1000);
     //intake.intake(-127, -127, 0);
 
-    drive.withGains(0.2, 0, 0, 30).move(-10, 45, 0);
+    drive.withGains(0.2, 0, 0, 35).move(-10, 45, 0); //30
     //wait(300);
     //intake.intake(127, 127, 0);
     drive.withTurnGains(1.25, 0, 0, 30).turn(-125);
@@ -1052,8 +1056,8 @@ void programming_skills()
     drive.withGains(0.2, 0, 0, 30).move(-12, -120, 0);
     drive.withTurnGains(1.6, 0, 0, 30).turn(-45);
 
-    drive.withGains(0.2, 0, 0, 30).moveWithVision(12, -45, 0, BLUE_ID);
-    drive.timedDrive(300, 30, 30);
+    drive.withGains(0.2, 0, 0, 30).moveWithVision(8, -45, 0, BLUE_ID); //12
+    drive.timedDrive(400, 30, 30);
 
     // setCoordinates(132, getY(), getTheta());
     // intake.intake(127, 127, -127);
@@ -1076,7 +1080,7 @@ void programming_skills()
 
     drive.withCorrection(0.3).withGains(8, 0, 0, 35).moveBackToYCoord(79, -90, 0); //80 , 0.5, 30
     intake.intake(-127, 30, 0);
-    drive.withTurnGains(1.35, 0, 0, 25).turn(-180); //1.25
+    drive.withTurnGains(1.35, 0, 0, 30).turn(-180); //1.25
     intake.intake(127, 0, 0);
     drive.withGains(8, 0, 0, 45).moveWithVisionToXCoord(82, -180, 0, RED_ID, false, true); //25
     drive.untilLineDetected(30, 5000);                                                     //30
@@ -1110,15 +1114,14 @@ void programming_skills()
     // drive.withTurnGains(1.25, 0, 0, 20).turn(-180);
     // drive.move(32, -180, 0);
 
-    drive.withTurnGains(1.35, 0, 0, 25).turn(-90);
-    //drive.withGains(0.3, 0, 0, 50).move(-6, -90, 0, false, true);
+    drive.withTurnGains(1.35, 0, 0, 30).turn(-90);
     drive.timedDrive(600, -60, -60);
-    drive.withGains(0.3, 0, 0, 50).move(5, -90, 0);
-    // drive.timedDrive(500, 40, 40);
-    drive.timedDrive(600, -60, -60);
-    // drive.timedDrive(500, 40, 40);
+
     drive.withGains(0.3, 0, 0, 50).move(5, -90, 0);
     drive.timedDrive(600, -60, -60);
+
+    // drive.withGains(0.3, 0, 0, 50).move(5, -90, 0);
+    // drive.timedDrive(600, -60, -60);
 
     //intake.frontRollers(127);
     drive.withGains(0.5, 0, 0, 40).move(38, -95, 0, true, true); //38, -92
@@ -1152,7 +1155,7 @@ void programming_skills()
     drive.move(-5, -90, 0, false, true);
     drive.withCorrection(0.15).withGains(0.2, 0, 0, 30).move(-32, -50, 0); //-32, 0.4
     intake.stop();
-    drive.withTurnGains(1.35, 0, 0, 30).turn(50); //1.25, 20
+    drive.withTurnGains(1.345, 0, 0, 30).turn(50); //1.25, 20
     //drive.move(6, 50, 0, false, true);           //8
     drive.timedDrive(750, 60, 60); //500
 
@@ -1160,8 +1163,8 @@ void programming_skills()
     drive.timedDrive(500, 60, 60);
 
     //intake.intake(127, 127, -127);
-    drive.withGains(0.2, 0, 0, 25).move(-6, 60, 0);
-    drive.withTurnGains(1.35, 0, 0, 25).turn(125); //1.25
+    drive.withGains(0.25, 0, 0, 35).move(-6, 60, 0);
+    drive.withTurnGains(1.35, 0, 0, 30).turn(125); //1.25
     intake.intake(127, 127, -127);
 
     drive.withGains(0.2, 0, 0, 30).moveWithVision(14, 125, 0, RED_ID, false, true); //6
@@ -1176,7 +1179,7 @@ void programming_skills()
 
     intake.score(ONE_BALL);
     intake.intake(127, 127, -127);
-    drive.timedDrive(100, 55, 5);
+    drive.timedDrive(50, 55, 55);
     //setTheta(180);
 
     drive.withGains(0.2, 0, 0, 30).move(-6, 180, 0); //-10
@@ -1187,11 +1190,11 @@ void programming_skills()
     drive.withTurnGains(2, 0, 0, 75).sweepLeft(225, 0, 15);
     drive.withGains(0.2, 0, 0, 40).moveWithVision(11, 225, 0, BLUE_ID);
     intake.intake(127, 0, 0);
-    drive.timedDrive(600, 40, 40);
+    drive.timedDrive(300, 40, 40);
+    drive.drivePower(30, 30);
 
     //drive.drivePower(45, 45);
     intake.score(ONE_BALL, 500);
-    drive.drivePower(30, 30);
     time = 0;
     while (time < 2000)
     {
