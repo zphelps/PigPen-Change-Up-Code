@@ -252,25 +252,53 @@ void Drive::coast()
 
 void Drive::driveOP(int driveMode)
 {
-    //Switch between two drive modes
-    switch (driveMode)
+    if (master.get_digital(DIGITAL_UP))
     {
-    case 0: //Match play
-    {
-        leftFront.move(master.get_analog(ANALOG_LEFT_Y));
-        leftBack.move(master.get_analog(ANALOG_LEFT_Y));
-        rightFront.move(master.get_analog(ANALOG_RIGHT_Y));
-        rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
-        break;
+
+        double baseTurnBias = driverBaseAngle(RED_ID);
+
+        int n = vision3.get_object_count();
+        // pros::lcd::print(0, "%d ", n);
+
+        if (n > 0)
+        {
+            pros::vision_object_s_t obj = vision3.get_by_sig(0, RED_ID);
+            // pros::lcd::print(1, "x: %3d y: %3d", obj.x_middle_coord, obj.y_middle_coord);
+            // pros::lcd::print(2, "w: %3d h: %3d", obj.width, obj.height);
+        }
+        else
+        {
+            // pros::lcd::print(1, "no objects");
+            // pros::lcd::print(2, "          ");
+        }
+
+        pros::delay(20);
+
+        drive.right(80 - baseTurnBias);
+        drive.left(80 + baseTurnBias);
     }
-    case 1: //Driver Skills
+    else
     {
-        leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.85);
-        leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.85);
-        rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.85);
-        rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.85);
-        break;
-    }
+        //Switch between two drive modes
+        switch (driveMode)
+        {
+        case 0: //Match play
+        {
+            leftFront.move(master.get_analog(ANALOG_LEFT_Y));
+            leftBack.move(master.get_analog(ANALOG_LEFT_Y));
+            rightFront.move(master.get_analog(ANALOG_RIGHT_Y));
+            rightBack.move(master.get_analog(ANALOG_RIGHT_Y));
+            break;
+        }
+        case 1: //Driver Skills
+        {
+            leftFront.move(master.get_analog(ANALOG_LEFT_Y) * 0.85);
+            leftBack.move(master.get_analog(ANALOG_LEFT_Y) * 0.85);
+            rightFront.move(master.get_analog(ANALOG_RIGHT_Y) * 0.85);
+            rightBack.move(master.get_analog(ANALOG_RIGHT_Y) * 0.85);
+            break;
+        }
+        }
     }
 }
 

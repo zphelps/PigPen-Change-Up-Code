@@ -46,7 +46,8 @@ pros::vision_object_s_t visionScannerData;
 bool updateVision;
 int color;
 
-pros::vision_object_s_t calculateVision(int inColor) //Function to read vision sensor data
+//Function to read vision sensor data
+pros::vision_object_s_t calculateVision(int inColor)
 {
     color = inColor;
     updateVision = true;
@@ -60,7 +61,8 @@ void monitorVisionTask(void *)
         //pros::Vision mainVision(6);
         if (updateVision)
         {
-            visionScannerData = vision3.get_by_sig(0, color); // Returns info for largest object of the signature
+            // Returns info for largest object of the signature
+            visionScannerData = vision3.get_by_sig(0, color);
             updateVision = false;
         }
         wait(10);
@@ -69,12 +71,15 @@ void monitorVisionTask(void *)
 
 #define BASE_P 0.9 // The Kp for X error / base power 0.85
 
-double driverBaseAngle(int inColor) //Function that outputs the power to be sent to the base for turning
+//Function that outputs the power to be sent to the base for turning
+double driverBaseAngle(int inColor)
 {
     int x_error = calculateVision(inColor).x_middle_coord - VISION_FOV_WIDTH / 2;
     // Centers the vision, and any x deriviation is our error
-    // If the vision sensor is not centered with the arm, a trig formula needs to be here.
-    // It will then output absolute, or most likely relative angle error. P will have to be changed
+    // If the vision sensor is not centered with the arm, a trig formula
+    // needs to be here.
+    // It will then output absolute, or most likely relative angle error.
+    // P will have to be changed
 
     float finalBasePower;
     if (calculateVision(inColor).signature == 255)
@@ -83,7 +88,8 @@ double driverBaseAngle(int inColor) //Function that outputs the power to be sent
     }
     else
     {
-        finalBasePower = x_error * BASE_P; // For now a simple P based on X deriviation from the center of the vision
+        finalBasePower = x_error * BASE_P; // For now a simple P based on X
+        // deriviation from the center of the vision
     }
     return finalBasePower; //Returns power to be sent to the base
 }
@@ -537,13 +543,13 @@ void Intake::intakeOP()
     {
         reverseFor(1000); //750
     }
-    else if (master.get_digital(DIGITAL_UP))
-    {
-        //Test Code:
-        //twoBlueCycleOneRed();
-        drive.move(-36, 0, 0, true, false);
-        reverseFor(2000);
-    }
+    // else if (master.get_digital(DIGITAL_UP))
+    // {
+    //     //Test Code:
+    //     //twoBlueCycleOneRed();
+    //     drive.move(-36, 0, 0, true, false);
+    //     reverseFor(2000);
+    // }
     else if (master.get_digital(DIGITAL_L1) || partner.get_digital(DIGITAL_L1))
     {
         coast(INDEXER);
