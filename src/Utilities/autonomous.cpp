@@ -271,7 +271,7 @@ void two_goal_and_middle_left()
     drive.withGains(0.3, 0, 0, 40).move(6, -180, 0); //8
     drive.drivePower(45, 45);
     intake.score(ONE_BALL);
-    while (!intakeBallDetected(BLUE_ID) && time < 2500)
+    while (!intakeBallDetected(RED_ID) && time < 2500) //BLUE_ID
     {
         intake.intake(127, 127, 0);
         wait(1);
@@ -284,8 +284,8 @@ void two_goal_and_middle_left()
     drive.withGains(6, 0, 0, 20).moveBackToXCoord(26, -180, 0);
     drive.withTurnGains(1.25, 0, 0, 25).turn(0);
     intake.intake(127, 0, 0);
-    drive.withGains(0.2, 0, 0, 30).move(6, 0, 0);
-    drive.withTurnGains(2, 0, 0, 35).sweepLeft(-25, 5, 2);
+    drive.withGains(0.2, 0, 0, 30).move(5, 0, 0);
+    drive.withTurnGains(2, 0, 0, 40).sweepLeft(-25, 5, 8);
     intake.stop();
     drive.timedDrive(600, 127, 10);
     intake.score(ONE_BALL, 1000);
@@ -315,36 +315,54 @@ void two_goal_and_middle_left()
 
 void two_goal_right()
 {
+    long startTime = pros::millis();
     int time = 0;
-    setCoordinates(0, 24, 0);
+    setCoordinates(0, 128, -90);
+    intake.indexer(60, 150);
     intake.intake(127, 127, 0);
-    drive.withTurnGains(1.5, 0, 0, 25).sweepRight(135, 0);
-    drive.withGains(0.2, 0, 0, 35).move(8, 135, 0);
-    drive.timedDrive(300, 30, 30); //300
+    drive.withTurnGains(1.5, 0, 0, 35).sweepLeft(-135, 15, 15);
+    intake.stop();
+    drive.drivePower(15, 40);
+    intake.indexer(-127, 250);
+    wait(100);
+    intake.stop();
+    intake.score(ONE_BALL, 2000);
+    wait(200);
+
+    drive.move(-6, -135, 0, false, true); //10
+    drive.withTurnGains(5, 0, 0, 100).sweepRightBack(-90, 0, 15);
+    intake.intake(127, 0, 0);
+    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(83, -90, 0); //0.8, 88
     intake.stop();
 
+    drive.withTurnGains(1.4, 0, 0, 20).turn(-180);   //1.25
+    drive.withGains(0.3, 0, 0, 40).move(6, -180, 0); //8
+    drive.drivePower(45, 45);
     intake.score(ONE_BALL);
-    intake.intake(0, 127, 0);
-
-    drive.move(-6, 135, 0, false, true); //10
-    drive.withTurnGains(5, 0, 0, 100).sweepLeftBack(90, 0, 15);
-    drive.withCorrection(0.6).withGains(6, 0, 0, 30).moveBackToYCoord(56, 90, 0); //0.8
-    intake.stop();
-
-    drive.withTurnGains(1.3, 0, 0, 20).turn(180);
-    drive.withGains(0.3, 0, 0, 40).move(10, 180, 0); //8
-    drive.timedDrive(100, 30, 30);
-    drive.drivePower(30, 30);
-    intake.score(ONE_BALL);
-    while (!intakeBallDetected(BLUE_ID))
+    while (!intakeBallDetected(BLUE_ID) && time < 2500)
     {
         intake.intake(127, 127, 0);
+        wait(1);
+        time++;
     }
     intake.stop();
     intake.score(ONE_BALL);
+    //intake.score(ONE_BALL);
     intake.frontRollers(-127);
 
-    drive.withGains(0.15, 0, 0, 30).move(-14, 180, 2);
+    drive.withGains(6, 0, 0, 20).moveBackToXCoord(26, -180, 0);
+    // drive.withTurnGains(1.25, 0, 0, 25).turn(0);
+    // intake.intake(127, 0, 0);
+    // drive.withGains(0.2, 0, 0, 30).move(6, 0, 0);
+    // drive.withTurnGains(2, 0, 0, 35).sweepLeft(-25, 5, 2);
+    // intake.stop();
+    // drive.timedDrive(600, 127, 10);
+    // intake.score(ONE_BALL, 1000);
+    // while (pros::millis() - startTime < 14500)
+    // {
+    //     wait(1);
+    // }
+    // drive.timedDrive(500, -127, -127);
 }
 
 void two_goal_left()
@@ -948,27 +966,30 @@ void programming_skills()
     intake.stop();
     intake.frontRollers(127);
 
-    drive.drivePower(-20, -20);
-    intake.scoreWithVision();
-    time = 0;
-    while (topBallDetected(RED_ID) && time < 1000)
-    {
-        if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
-        {
-            intake.intake(127, 0, 0);
-        }
-        else
-        {
-            intake.intake(127, 127, 60);
-        }
-        drive.drivePower(20, 20); //20
-        wait(1);
-        time++;
-    }
-    drive.drivePower(10, 10);
+    drive.drivePower(-15, -15);
+    intake.score(ONE_BALL);
     intake.stop();
-    intake.score(ONE_BALL, 1500);
-    wait(250);
+    // drive.drivePower(-15, -15);
+    // intake.scoreWithVision();
+    // time = 0;
+    // while (topBallDetected(RED_ID) && time < 500)
+    // {
+    //     if (topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
+    //     {
+    //         intake.intake(127, 0, 0);
+    //     }
+    //     else
+    //     {
+    //         intake.intake(127, 0, 0);
+    //     }
+    //     drive.drivePower(20, 20); //20
+    //     wait(1);
+    //     time++;
+    // }
+    // drive.drivePower(10, 10);
+    // intake.stop();
+    // intake.score(ONE_BALL, 1500);
+    // wait(250);
 
     intake.intake(127, -30, 0);
     drive.withGains(10, 0, 0, 30).moveBackToYCoord(20, 135, 0, true); //10
@@ -1005,7 +1026,7 @@ void programming_skills()
     intake.score(TWO_BALLS);
     setCoordinates(getX(), 2, getTheta());
     intake.frontRollers(127);
-    drive.timedDrive(150, 50, 50); //100, 60, 60
+    drive.timedDrive(200, 50, 50); //100, 60, 60
     intake.intake(127, -5, 0);
     wait(100);
 
@@ -1014,14 +1035,14 @@ void programming_skills()
     drive.withTurnGains(1.25, 0, 0, 30).turn(0);
     intake.intake(127, 127, -127);
 
-    drive.withGains(0.1, 0, 0, 40).moveWithVision(38, 0, 0, RED_ID, true, true); //38
+    drive.withGains(0.1, 0, 0, 40).moveWithVision(40, 0, 0, RED_ID, true, true); //38
     if (intakeBallDetected(RED_ID))
     {
         intake.intake(127, 0, 0);
     }
     drive.waitForComplete();
     intake.intake(127, 0, 0);
-    drive.untilLineDetected(25); //30
+    drive.untilLineDetected(30); //30
     setCoordinates(120, getY(), 0);
     intake.intake(127, 0, 0);
     drive.withTurnGains(1.25, 0, 0, 25).turn(90);                          //1.3, 30
@@ -1043,6 +1064,7 @@ void programming_skills()
     intake.scoreWithVision(1000);
     //intake.intake(-127, -127, 0);
 
+    intake.intake(127, -127, -60);
     drive.withGains(0.2, 0, 0, 35).move(-10, 45, 0); //30
     if (intakeLimit.get_value() == 1 || topRollerLine.get_value() < BALL_DETECTED_SIGNATURE)
     {
@@ -1059,15 +1081,15 @@ void programming_skills()
 
     drive.withTurnGains(1.2, 0, 0, 25).turn(0); //1.35, 25
     intake.intake(127, 0, 0);
-    drive.withGains(0.25, 0, 0, 100).move(12, 0, 0, false, true);
-    drive.withGains(0.25, 0, 0, 30).moveWithVision(13, 0, 0, BLUE_ID, false, true);
+    drive.withGains(0.25, 0, 0, 100).move(9, 0, 0, false, true);
+    drive.withGains(0.2, 0, 0, 30).moveWithVision(16, 0, 0, BLUE_ID, false, true);
     //drive.move(28, 0, 2);
     intake.stop();
     drive.timedDrive(300, 30, 30);
 
     intake.score(ONE_BALL, 1000); //500
     intake.intake(127, 0, 0);
-    drive.timedDrive(100, 35, 35); //40, 40
+    drive.timedDrive(50, 35, 35); //100, 40, 40
 
     drive.untilLineDetected(-30);
     setCoordinates(120, getY(), 0);
@@ -1105,7 +1127,7 @@ void programming_skills()
     wait(250);
     intake.intake(-127, 0, 0);
 
-    drive.withCorrection(0.3).withGains(8, 0, 0, 35).moveBackToYCoord(79, -90, 0); //80 , 0.5, 30
+    drive.withCorrection(0.3).withGains(6, 0, 0, 35).moveBackToYCoord(79, -90, 0); //79 , 0.3, 35
     intake.intake(-127, 30, 0);
     drive.withTurnGains(1.35, 0, 0, 30).turn(-180); //1.25
     intake.intake(127, 0, 0);
@@ -1142,16 +1164,16 @@ void programming_skills()
     // drive.move(32, -180, 0);
 
     drive.withTurnGains(1.35, 0, 0, 30).turn(-90);
-    drive.timedDrive(600, -60, -60);
+    drive.timedDrive(800, -60, -60); //600
 
-    drive.withGains(0.3, 0, 0, 50).move(5, -90, 0);
-    drive.timedDrive(600, -60, -60);
+    // drive.withGains(0.3, 0, 0, 50).move(5, -90, 0);
+    // drive.timedDrive(800, -60, -60);
 
     // drive.withGains(0.3, 0, 0, 50).move(5, -90, 0);
     // drive.timedDrive(600, -60, -60);
 
     //intake.frontRollers(127);
-    drive.withGains(0.2, 0, 0, 30).move(38, -90, 0, true, true); //38, -92
+    drive.withGains(0.15, 0, 0, 30).move(38, -86, 0, true, true); //38, -92
     // drive.withGains(0.25, 0, 0, 100).move(12, -90, 0, false, true); //10
     // drive.withGains(0.25, 0, 0, 40).moveWithVision(12, -90, 0, BLUE_ID, false, true);
     time = 0;
@@ -1171,7 +1193,7 @@ void programming_skills()
     }
     drive.waitForComplete();
     intake.intake(127, 0, 0);
-    drive.timedDrive(300, 30, 30);
+    drive.timedDrive(500, 35, 35);
     intake.stop();
 
     intake.score(TWO_BALLS);
@@ -1183,23 +1205,25 @@ void programming_skills()
     drive.withCorrection(0.15).withGains(0.2, 0, 0, 30).move(-32, -50, 0); //-32, 0.4
     intake.stop();
     drive.withTurnGains(1.345, 0, 0, 30).turn(50); //1.25, 20
+    intake.intake(127, 50, 0);
     //drive.move(6, 50, 0, false, true);           //8
     drive.timedDrive(750, 60, 60); //500
+    intake.stop();
 
     intake.score(ONE_BALL);
     drive.timedDrive(500, 60, 60);
 
     //intake.intake(127, 127, -127);
     drive.withGains(0.25, 0, 0, 35).move(-6, 60, 0);
-    drive.withTurnGains(1.35, 0, 0, 30).turn(125); //1.25
+    drive.withTurnGains(1.45, 0, 0, 30).turn(125); //1.25
     intake.intake(127, 127, -127);
 
-    drive.withGains(0.2, 0, 0, 30).moveWithVision(14, 125, 0, RED_ID, false, true); //6
+    drive.withGains(0.2, 0, 0, 35).move(12, 125, 0, false, true); //6
     intake.intake(127, 127, 0);
     drive.withTurnGains(1.35, 0, 0, 30).turn(180);
     // drive.sweepRight(180, -20, 10);                                                   //-15
     //drive.withCorrection(0.1).withGains(0.2, 0, 0, 40).move(32, 181, 0, false, true); //32
-    drive.withCorrection(0.1).withGains(0.3, 0, 0, 90).move(20, 181, 0, false, true); //32
+    drive.withCorrection(0.1).withGains(0.3, 0, 0, 90).move(20, 182, 0, false, true); //32
     drive.withGains(0.15, 0, 0, 40).moveWithVision(14, 181, 0, BLUE_ID, false, true); //32
     intake.stop();
     drive.timedDrive(300, 60, 60); //750, 30, 30
@@ -1749,7 +1773,7 @@ void autonomous()
     //two_goal_and_middle_left();
     //programming_skills_126();
     //home_row_left_no_cycle_with_center();
-    programming_skills();
+    // programming_skills();
     // two_goal_and_middle_left();
     //corner_side_center_right();
     //home_row_left_no_cycle();
@@ -1789,29 +1813,29 @@ void autonomous()
     //two_goal_right();
     // two_goal_left();
 
-    // switch (autonIndex)
-    // {
-    // case 0:
-    //     home_row_right_no_cycle();
-    //     break;
-    // case 1:
-    //     home_row_right_cycle();
-    //     break;
-    // case 2:
-    //     home_row_left_no_cycle();
-    //     break;
-    // case 3:
-    //     home_row_left_no_cycle_with_center();
-    //     break;
-    // case 4:
-    //     two_goal_right();
-    //     break;
-    // case 5:
-    //     two_goal_and_middle_left();
-    //     break;
-    // case 6:
-    //     programming_skills();
-    //     //two_goal_and_middle_left();
-    //     break;
-    // }
+    switch (autonIndex)
+    {
+    case 0:
+        home_row_right_no_cycle();
+        break;
+    case 1:
+        home_row_right_cycle();
+        break;
+    case 2:
+        home_row_left_no_cycle();
+        break;
+    case 3:
+        home_row_left_no_cycle_with_center();
+        break;
+    case 4:
+        two_goal_right();
+        break;
+    case 5:
+        two_goal_and_middle_left();
+        break;
+    case 6:
+        programming_skills();
+        //two_goal_and_middle_left();
+        break;
+    }
 }
