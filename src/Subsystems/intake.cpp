@@ -69,10 +69,10 @@ void monitorVisionTask(void *)
     }
 }
 
-#define BASE_P 0.9 // The Kp for X error / base power 0.85
+// #define BASE_P 1.25 // The Kp for X error / base power 0.9
 
 //Function that outputs the power to be sent to the base for turning
-double driverBaseAngle(int inColor)
+double driverBaseAngle(int inColor, int PIDSpeed)
 {
     int x_error = calculateVision(inColor).x_middle_coord - VISION_FOV_WIDTH / 2;
     // Centers the vision, and any x deriviation is our error
@@ -88,6 +88,11 @@ double driverBaseAngle(int inColor)
     }
     else
     {
+        double BASE_P = 0.75;
+        if (PIDSpeed > 65)
+        {
+            double BASE_P = 1.25;
+        }
         finalBasePower = x_error * BASE_P; // For now a simple P based on X
         // deriviation from the center of the vision
     }

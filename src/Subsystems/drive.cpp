@@ -255,7 +255,7 @@ void Drive::driveOP(int driveMode)
     if (master.get_digital(DIGITAL_UP))
     {
 
-        double baseTurnBias = driverBaseAngle(RED_ID);
+        double baseTurnBias = driverBaseAngle(RED_ID, 80);
 
         int n = vision3.get_object_count();
         // pros::lcd::print(0, "%d ", n);
@@ -1184,7 +1184,7 @@ void Drive::moveTask(void *parameter)
             {
                 double PIDSpeed = movePID.getOutput(target, L.get_value());
                 driveError = moveTargets.targetDistance - ((L.get_value() / TICS_PER_REVOLUTION) * (WHEEL_DIAMETER * PI));
-                double baseTurnBias = driverBaseAngle(moveTargets.color);
+                double baseTurnBias = driverBaseAngle(moveTargets.color, PIDSpeed);
 
                 right(PIDSpeed - baseTurnBias);
                 left(PIDSpeed + baseTurnBias);
@@ -1219,7 +1219,7 @@ void Drive::moveTask(void *parameter)
             while (getX() < target)
             {
                 double PIDSpeed = movePID.getOutput(target, getX());
-                double baseTurnBias = driverBaseAngle(moveTargets.color);
+                double baseTurnBias = driverBaseAngle(moveTargets.color, PIDSpeed);
 
                 right(PIDSpeed - baseTurnBias);
                 left(PIDSpeed + baseTurnBias);
@@ -1230,7 +1230,7 @@ void Drive::moveTask(void *parameter)
             while (getX() > target)
             {
                 double PIDSpeed = -movePID.getOutput(target, getX());
-                double baseTurnBias = driverBaseAngle(moveTargets.color);
+                double baseTurnBias = driverBaseAngle(moveTargets.color, PIDSpeed);
 
                 right(PIDSpeed - baseTurnBias);
                 left(PIDSpeed + baseTurnBias);
@@ -1265,7 +1265,7 @@ void Drive::moveTask(void *parameter)
             while (getY() < target)
             {
                 double PIDSpeed = movePID.getOutput(target, getY());
-                double baseTurnBias = driverBaseAngle(moveTargets.color);
+                double baseTurnBias = driverBaseAngle(moveTargets.color, PIDSpeed);
 
                 right(PIDSpeed - baseTurnBias);
                 left(PIDSpeed + baseTurnBias);
@@ -1276,7 +1276,7 @@ void Drive::moveTask(void *parameter)
             while (getY() > target)
             {
                 double PIDSpeed = -movePID.getOutput(target, getY());
-                double baseTurnBias = driverBaseAngle(moveTargets.color);
+                double baseTurnBias = driverBaseAngle(moveTargets.color, PIDSpeed);
 
                 right(PIDSpeed - baseTurnBias);
                 left(PIDSpeed + baseTurnBias);

@@ -26,7 +26,7 @@ extern pros::Vision vision;
 //Visions Functions
 void initVision();
 
-double driverBaseAngle(int inColor);
+double driverBaseAngle(int inColor, int PIDSpeed);
 void monitorVisionTask(void *);
 pros::vision_object_s_t calculateVision(int inColor);
 
